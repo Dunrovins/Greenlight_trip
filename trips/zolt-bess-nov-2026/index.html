@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Интерактивный маршрут поездки ZOLT по производителям BESS в Китае, 22–29 ноября 2026 года.">
+  <title>ZOLT · China BESS supplier trip · 22–29 November 2026</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <style>
+    :root {
+      --paper: #ffffff;
+      --field: #f7f7f8;
+      --ink: #111111;
+      --muted: #66666c;
+      --line: #d8d8dc;
+      --accent: #e4002b;
+      --accent-dark: #a6001f;
+      --route-idle: #bfc0c4;
+      --map-water: #f1f2f3;
+      --map-land: #fafafa;
+      --max: 1500px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.42;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, a { font: inherit; }
+
+    button:focus-visible, a:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .shell {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      padding: 0 28px 40px;
+    }
+
+    .masthead {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(260px, .65fr);
+      border-top: 14px solid var(--accent);
+      border-bottom: 1px solid var(--ink);
+      padding: 26px 0 24px;
+      gap: 28px;
+      align-items: end;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 920px;
+      font-size: clamp(38px, 5.1vw, 76px);
+      line-height: .96;
+      letter-spacing: -.045em;
+      font-weight: 700;
+    }
+
+    .date-lockup {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: end;
+      gap: 15px;
+      justify-self: end;
+    }
+
+    .date-lockup strong {
+      font-size: clamp(54px, 7vw, 92px);
+      line-height: .78;
+      letter-spacing: -.06em;
+      color: var(--accent);
+    }
+
+    .date-lockup span {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.18;
+      text-transform: uppercase;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-bottom: 1px solid var(--ink);
+    }
+
+    .summary-item {
+      min-width: 0;
+      padding: 18px 18px 16px 0;
+      border-right: 1px solid var(--line);
+    }
+
+    .summary-item + .summary-item { padding-left: 18px; }
+    .summary-item:last-child { border-right: 0; }
+    .summary-item strong { display: block; font-size: 23px; letter-spacing: -.03em; }
+    .summary-item span { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+
+    .notice {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+
+    .notice strong { color: var(--accent); }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      flex: 0 0 auto;
+    }
+
+    .button {
+      appearance: none;
+      border: 1px solid var(--ink);
+      border-radius: 0;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 40px;
+      padding: 8px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      min-width: 0;
+    }
+
+    .button.primary { background: var(--ink); color: var(--paper); }
+    .button:hover { background: var(--field); }
+    .button.primary:hover { background: var(--accent); border-color: var(--accent); }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(360px, .85fr);
+      min-height: 720px;
+      border-bottom: 1px solid var(--ink);
+    }
+
+    .map-panel {
+      position: relative;
+      min-width: 0;
+      border-right: 1px solid var(--ink);
+    }
+
+    #trip-map {
+      height: 720px;
+      width: 100%;
+      background: var(--map-water);
+    }
+
+    .map-key {
+      position: absolute;
+      z-index: 800;
+      left: 16px;
+      bottom: 16px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      background: rgba(255, 255, 255, .94);
+      border: 1px solid var(--ink);
+      padding: 9px 11px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .key-item { display: inline-flex; align-items: center; gap: 7px; }
+    .key-line { width: 28px; height: 0; border-top: 3px solid var(--accent); }
+    .key-line.air { border-top-style: dashed; }
+    .key-line.road { border-top-width: 1px; }
+
+    .timeline {
+      min-width: 0;
+      background: var(--paper);
+    }
+
+    .timeline-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--ink);
+      background: var(--field);
+    }
+
+    .timeline-heading strong { font-size: 17px; }
+    .timeline-heading span { color: var(--muted); font-size: 13px; text-align: right; }
+
+    .day-list { display: grid; }
+
+    .day-card {
+      appearance: none;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 66px 1fr;
+      gap: 13px;
+      padding: 15px 18px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      background: var(--paper);
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      transition: background-color .2s ease, color .2s ease;
+    }
+
+    .day-card:hover { background: var(--field); }
+    .day-card[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+    .day-card[aria-pressed="true"] .day-meta,
+    .day-card[aria-pressed="true"] .day-note { color: #d7d7da; }
+    .day-card[aria-pressed="true"] .date-number { color: var(--accent); }
+
+    .date-box {
+      border-right: 1px solid currentColor;
+      padding-right: 12px;
+      align-self: stretch;
+    }
+
+    .date-number {
+      display: block;
+      font-size: 34px;
+      line-height: .95;
+      letter-spacing: -.05em;
+      font-weight: 700;
+    }
+
+    .date-month {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .day-title { display: block; font-size: 16px; font-weight: 700; }
+    .day-meta { display: block; margin-top: 3px; color: var(--muted); font-size: 13px; }
+    .day-note { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; }
+
+    .route-label {
+      background: var(--paper);
+      border: 1px solid var(--ink);
+      border-radius: 0;
+      box-shadow: none;
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 6px;
+    }
+
+    .route-label::before { display: none; }
+
+    .numbered-marker {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--paper);
+      border-radius: 50%;
+      background: var(--ink);
+      color: var(--paper);
+      box-shadow: 0 0 0 1px var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .numbered-marker.is-active { background: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+
+    .moving-marker {
+      min-width: 68px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--paper);
+      background: var(--accent);
+      color: var(--paper);
+      box-shadow: 0 0 0 1px var(--accent);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .leaflet-popup-content-wrapper,
+    .leaflet-popup-tip {
+      border-radius: 0;
+      background: var(--paper);
+      color: var(--ink);
+      box-shadow: 0 4px 18px rgba(0,0,0,.18);
+    }
+
+    .leaflet-popup-content { margin: 12px 14px; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+    .popup-date { color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; }
+    .popup-title { margin-top: 3px; font-size: 15px; font-weight: 700; }
+    .popup-copy { margin-top: 4px; font-size: 12px; color: var(--muted); }
+
+    .details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--ink);
+    }
+
+    .detail-block {
+      padding: 24px 0;
+    }
+
+    .detail-block:first-child { padding-right: 30px; border-right: 1px solid var(--line); }
+    .detail-block:last-child { padding-left: 30px; }
+    .detail-block h2 { margin: 0 0 13px; font-size: 20px; letter-spacing: -.025em; }
+    .detail-block p { margin: 0 0 10px; color: var(--muted); font-size: 14px; }
+    .detail-block p:last-child { margin-bottom: 0; }
+    .detail-block strong { color: var(--ink); }
+
+    .source-list { margin: 0; padding: 0; list-style: none; }
+    .source-list li { padding: 8px 0; border-top: 1px solid var(--line); font-size: 13px; }
+    .source-list a { color: var(--ink); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 22px;
+      padding-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    footer p { margin: 0; max-width: 760px; }
+
+    @media (max-width: 980px) {
+      .masthead { grid-template-columns: 1fr; }
+      .date-lockup { justify-self: start; }
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .summary-item:nth-child(2) { border-right: 0; }
+      .summary-item:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .workspace { grid-template-columns: 1fr; }
+      .map-panel { border-right: 0; border-bottom: 1px solid var(--ink); }
+      #trip-map { height: 560px; }
+      .day-list { grid-template-columns: 1fr 1fr; }
+      .day-card:nth-child(odd) { border-right: 1px solid var(--line); }
+    }
+
+    @media (max-width: 680px) {
+      .shell { padding: 0 16px 28px; }
+      .masthead { padding-top: 18px; }
+      h1 { font-size: 34px; line-height: .98; overflow-wrap: anywhere; }
+      .date-lockup strong { font-size: 62px; }
+      .notice { align-items: flex-start; flex-direction: column; }
+      .notice > div:first-child { max-width: 100%; overflow-wrap: anywhere; }
+      .controls { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
+      .button { width: 100%; padding-inline: 8px; }
+      .button.primary { grid-column: 1 / -1; }
+      .summary-item strong { font-size: 20px; overflow-wrap: anywhere; }
+      .summary-item span { overflow-wrap: anywhere; }
+      #trip-map { height: 460px; }
+      .day-list { grid-template-columns: 1fr; }
+      .day-card:nth-child(odd) { border-right: 0; }
+      .details { grid-template-columns: 1fr; }
+      .detail-block:first-child { padding-right: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+      .detail-block:last-child { padding-left: 0; }
+      footer { flex-direction: column; }
+    }
+
+    @media print {
+      .shell { max-width: none; padding: 0; }
+      .controls, .leaflet-control-container { display: none !important; }
+      .workspace { min-height: 0; grid-template-columns: 1.45fr .8fr; }
+      #trip-map { height: 590px; }
+      .day-card { padding: 10px 12px; }
+      .date-number { font-size: 26px; }
+      .day-note { display: none; }
+      a { color: inherit; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">ZOLT Energy · China supplier visit</p>
+        <h1>Маршрут по производителям BESS</h1>
+      </div>
+      <div class="date-lockup" aria-label="22–29 ноября 2026 года">
+        <strong>8</strong>
+        <span>дней<br>22–29 ноября<br>2026</span>
+      </div>
+    </header>
+
+    <section class="summary-grid" aria-label="Краткое описание поездки">
+      <div class="summary-item"><strong>4</strong><span>производителя в маршруте</span></div>
+      <div class="summary-item"><strong>27 ноября</strong><span>выбранная дата посещения Deye</span></div>
+      <div class="summary-item"><strong>2</strong><span>внутренних перелёта</span></div>
+      <div class="summary-item"><strong>29 ноября</strong><span>вылет из Шанхая в воскресенье</span></div>
+    </section>
+
+    <section class="notice" aria-label="Актуальные изменения">
+      <div><strong>Маршрут скорректирован:</strong> KEHUA исключена. Deye запланирована на 27 ноября — это минимизирует обратные переезды.</div>
+      <div class="controls">
+        <button class="button primary" id="play-route" type="button">Показать маршрут</button>
+        <button class="button" id="show-all" type="button">Весь маршрут</button>
+        <button class="button" type="button" onclick="window.print()">Печать</button>
+      </div>
+    </section>
+
+    <section class="workspace" aria-label="Интерактивная карта и расписание">
+      <div class="map-panel">
+        <div id="trip-map" role="application" aria-label="Интерактивная карта маршрута из Шанхая через Саньмэнься, Гуанчжоу, Хуэйчжоу и Нинбо обратно в Шанхай"></div>
+        <div class="map-key" aria-label="Условные обозначения">
+          <span class="key-item"><span class="key-line"></span>поезд</span>
+          <span class="key-item"><span class="key-line air"></span>самолёт</span>
+          <span class="key-item"><span class="key-line road"></span>автомобиль</span>
+        </div>
+      </div>
+
+      <aside class="timeline" aria-label="Расписание по дням">
+        <div class="timeline-heading">
+          <strong>План поездки</strong>
+          <span>Нажмите на день,<br>чтобы увидеть участок</span>
+        </div>
+        <div class="day-list" id="day-list">
+          <button class="day-card" type="button" data-day="0" aria-pressed="false">
+            <span class="date-box"><span class="date-number">22</span><span class="date-month">вс · ноя</span></span>
+            <span><span class="day-title">Прилёт в Шанхай</span><span class="day-meta">≈09:00 · PVG → Hongqiao → Sanmenxia</span><span class="day-note">После паспортного контроля — прямой скоростной поезд. Прибытие вечером.</span></span>
+          </button>
+          <button class="day-card" type="button" data-day="1" aria-pressed="false">
+            <span class="date-box"><span class="date-number">23</span><span class="date-month">пн · ноя</span></span>
+            <span><span class="day-title">EAST · производство BESS</span><span class="day-meta">09:00–17:00 · Sanmenxia</span><span class="day-note">Производство, PACK, PCS/EMS, испытания и техническая сессия.</span></span>
+          </button>
+          <button class="day-card" type="button" data-day="2" aria-pressed="false">
+            <span class="date-box"><span class="date-number">24</span><span class="date-month">вт · ноя</span></span>
+            <span><span class="day-title">EAST и перелёт на юг</span><span class="day-meta">09:00–12:00 · Sanmenxia → Zhengzhou → Guangzhou</span><span class="day-note">Вторая техническая сессия, затем поезд и вечерний рейс.</span></span>
+          </button>
+          <button class="day-card" type="button" data-day="3" aria-pressed="false">
+            <span class="date-box"><span class="date-number">25</span><span class="date-month">ср · ноя</span></span>
+            <span><span class="day-title">Voltgen · встреча в офисе</span><span class="day-meta">09:30–12:00 · Guangzhou</span><span class="day-note">После встречи — автомобиль в Huizhou и ночёвка рядом с BSLBATT.</span></span>
+          </button>
+          <button class="day-card" type="button" data-day="4" aria-pressed="false">
+            <span class="date-box"><span class="date-number">26</span><span class="date-month">чт · ноя</span></span>
+            <span><span class="day-title">BSLBATT · завод</span><span class="day-meta">09:00–16:30 · Huizhou</span><span class="day-note">Заводская проверка. Вечером — трансфер в SZX и рейс в Ningbo.</span></span>
+          </button>
+          <button class="day-card" type="button" data-day="5" aria-pressed="false">
+            <span class="date-box"><span class="date-number">27</span><span class="date-month">пт · ноя</span></span>
+            <span><span class="day-title">Deye · производство BESS</span><span class="day-meta">09:00–17:00 · Cixi / Ningbo</span><span class="day-note">Выбран один из доступных дней: 25, 26 или 27 ноября.</span></span>
+          </button>
+          <button class="day-card" type="button" data-day="6" aria-pressed="false">
+            <span class="date-box"><span class="date-number">28</span><span class="date-month">сб · ноя</span></span>
+            <span><span class="day-title">Возвращение в Шанхай</span><span class="day-meta">Утро · Ningbo → Shanghai</span><span class="day-note">Скоростной поезд, резервный день и ночёвка рядом с Pudong.</span></span>
+          </button>
+          <button class="day-card" type="button" data-day="7" aria-pressed="false">
+            <span class="date-box"><span class="date-number">29</span><span class="date-month">вс · ноя</span></span>
+            <span><span class="day-title">Вылет в Казань</span><span class="day-meta">13:00 · MU5065 · PVG Terminal 1</span><span class="day-note">Плановое прибытие в Казань — 17:00 по местному времени.</span></span>
+          </button>
+        </div>
+      </aside>
+    </section>
+
+    <section class="details">
+      <div class="detail-block">
+        <h2>Адреса посещений</h2>
+        <p><strong>EAST:</strong> BESS production base, Sanmenxia, Henan. Точный адрес проходной должен подтвердить контакт EAST.</p>
+        <p><strong>Voltgen:</strong> 广州市白云区三元里大道中合益街16–30号天球商务大厦9楼. Это офис; наличие производства на площадке нужно подтвердить.</p>
+        <p><strong>BSLBATT:</strong> 广东省惠州市仲恺高新区潼湖生态智慧区群益智能制造产业园D区2号楼2–3单元1楼、8楼.</p>
+        <p><strong>Deye ESS:</strong> No. 568 South Rixian Road, Binhai Economic Development Zone, Cixi, Ningbo, Zhejiang.</p>
+      </div>
+      <div class="detail-block">
+        <h2>Проверки перед бронированием</h2>
+        <ul class="source-list">
+          <li>Подтвердить прилёт 22 ноября и точное время по билету; 09:00 на карте пока является рабочим временем.</li>
+          <li>Получить точный адрес и пропуск на производство EAST в Sanmenxia.</li>
+          <li>Подтвердить вечерние рейсы Zhengzhou → Guangzhou 24 ноября и Shenzhen → Ningbo 26 ноября.</li>
+          <li>Подтвердить у Deye, что встреча 27 ноября проходит именно на площадке ESS в Cixi.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      <p>Время с символом ≈ является плановым. Номера внутренних рейсов и поездов фиксируются после подтверждения встреч и открытия продажи билетов. Версия маршрута: 5 ноября 2026 года.</p>
+      <p><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap</a></p>
+    </footer>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    const locations = {
+      pvg: { name: "Shanghai Pudong", coords: [31.1443, 121.8083], date: "22 / 29 NOV", copy: "Прилёт и обратный международный рейс." },
+      hongqiao: { name: "Shanghai Hongqiao", coords: [31.1979, 121.3270], date: "22 / 28 NOV", copy: "Станция скоростных поездов." },
+      sanmenxia: { name: "EAST · Sanmenxia", coords: [34.7726, 111.2004], date: "23–24 NOV", copy: "Производственная база BESS; точный адрес проходной ожидается." },
+      zhengzhou: { name: "Zhengzhou", coords: [34.5197, 113.8409], date: "24 NOV", copy: "Пересадка с высокоскоростного поезда на рейс в Guangzhou." },
+      guangzhou: { name: "Voltgen · Guangzhou", coords: [23.1818, 113.2590], date: "25 NOV", copy: "Офис на Sanyuanli Avenue, Baiyun District." },
+      huizhou: { name: "BSLBATT · Huizhou", coords: [23.0310, 114.3390], date: "26 NOV", copy: "Производственная площадка в Zhongkai High-tech Zone." },
+      shenzhen: { name: "Shenzhen Bao'an", coords: [22.6393, 113.8107], date: "26 NOV", copy: "Вечерний прямой рейс в Ningbo." },
+      cixi: { name: "Deye ESS · Cixi", coords: [30.1697, 121.2665], date: "27–28 NOV", copy: "Площадка ESS в Binhai Economic Development Zone; затем трансфер на поезд в Shanghai." },
+      ningbo: { name: "Ningbo", coords: [29.8683, 121.5440], date: "28 NOV", copy: "Скоростной поезд обратно в Shanghai." }
+    };
+
+    const days = [
+      { index: 0, focus: "sanmenxia", legs: ["arrival", "shanghai-sanmenxia"] },
+      { index: 1, focus: "sanmenxia", legs: [] },
+      { index: 2, focus: "guangzhou", legs: ["sanmenxia-zhengzhou", "zhengzhou-guangzhou"] },
+      { index: 3, focus: "huizhou", legs: ["guangzhou-huizhou"] },
+      { index: 4, focus: "cixi", legs: ["huizhou-shenzhen", "shenzhen-cixi"] },
+      { index: 5, focus: "cixi", legs: [] },
+      { index: 6, focus: "pvg", legs: ["cixi-ningbo", "ningbo-hongqiao", "hongqiao-pvg"] },
+      { index: 7, focus: "pvg", legs: ["departure"] }
+    ];
+
+    const legs = [
+      { id: "arrival", from: [33.6, 126.0], to: locations.pvg.coords, mode: "AIR", style: "air", day: 0 },
+      { id: "shanghai-sanmenxia", from: locations.hongqiao.coords, to: locations.sanmenxia.coords, mode: "TRAIN", style: "rail", day: 0 },
+      { id: "sanmenxia-zhengzhou", from: locations.sanmenxia.coords, to: locations.zhengzhou.coords, mode: "TRAIN", style: "rail", day: 2 },
+      { id: "zhengzhou-guangzhou", from: locations.zhengzhou.coords, to: locations.guangzhou.coords, mode: "FLIGHT", style: "air", day: 2 },
+      { id: "guangzhou-huizhou", from: locations.guangzhou.coords, to: locations.huizhou.coords, mode: "CAR", style: "road", day: 3 },
+      { id: "huizhou-shenzhen", from: locations.huizhou.coords, to: locations.shenzhen.coords, mode: "CAR", style: "road", day: 4 },
+      { id: "shenzhen-cixi", from: locations.shenzhen.coords, to: locations.cixi.coords, mode: "FLIGHT", style: "air", day: 4 },
+      { id: "cixi-ningbo", from: locations.cixi.coords, to: locations.ningbo.coords, mode: "CAR", style: "road", day: 6 },
+      { id: "ningbo-hongqiao", from: locations.ningbo.coords, to: locations.hongqiao.coords, mode: "TRAIN", style: "rail", day: 6 },
+      { id: "hongqiao-pvg", from: locations.hongqiao.coords, to: locations.pvg.coords, mode: "CAR", style: "road", day: 6 },
+      { id: "departure", from: locations.pvg.coords, to: [36.0, 125.8], mode: "FLIGHT", style: "air", day: 7 }
+    ];
+
+    const map = L.map("trip-map", {
+      zoomControl: true,
+      attributionControl: true,
+      minZoom: 4,
+      maxZoom: 13
+    });
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
+
+    const markerOrder = ["pvg", "sanmenxia", "guangzhou", "huizhou", "cixi"];
+    const markers = {};
+
+    function markerIcon(label, active = false) {
+      return L.divIcon({
+        className: "",
+        html: `<div class="numbered-marker${active ? " is-active" : ""}">${label}</div>`,
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
+        popupAnchor: [0, -20]
+      });
+    }
+
+    markerOrder.forEach((key, i) => {
+      const item = locations[key];
+      const marker = L.marker(item.coords, { icon: markerIcon(i + 1) }).addTo(map);
+      marker.bindTooltip(item.date, { permanent: true, direction: "top", offset: [0, -21], className: "route-label" });
+      marker.bindPopup(`<div class="popup-date">${item.date}</div><div class="popup-title">${item.name}</div><div class="popup-copy">${item.copy}</div>`);
+      markers[key] = marker;
+    });
+
+    const lineLayers = new Map();
+    const styleFor = (style, active = false) => ({
+      color: active ? "#e4002b" : "#bfc0c4",
+      weight: style === "road" ? (active ? 3 : 2) : (active ? 5 : 3),
+      opacity: active ? 1 : .58,
+      dashArray: style === "air" ? "10 9" : null,
+      lineCap: "square",
+      lineJoin: "miter"
+    });
+
+    legs.forEach(leg => {
+      const line = L.polyline([leg.from, leg.to], styleFor(leg.style, true)).addTo(map);
+      line.bindTooltip(leg.mode, { sticky: true, className: "route-label" });
+      lineLayers.set(leg.id, line);
+    });
+
+    const allCoords = Object.values(locations).map(item => item.coords);
+    const routeBounds = L.latLngBounds(allCoords);
+    map.fitBounds(routeBounds.pad(.28), { padding: [28, 28] });
+
+    let movingMarker = null;
+    let playTimer = null;
+    let activeDay = -1;
+
+    function movingIcon(mode) {
+      return L.divIcon({
+        className: "",
+        html: `<div class="moving-marker">${mode}</div>`,
+        iconSize: [72, 30],
+        iconAnchor: [36, 15]
+      });
+    }
+
+    function setActiveDay(index, openPopup = true) {
+      activeDay = index;
+      document.querySelectorAll(".day-card").forEach((card, cardIndex) => {
+        card.setAttribute("aria-pressed", cardIndex === index ? "true" : "false");
+      });
+
+      legs.forEach(leg => {
+        lineLayers.get(leg.id).setStyle(styleFor(leg.style, leg.day === index));
+      });
+
+      markerOrder.forEach((key, markerIndex) => {
+        const activeKey = days[index].focus;
+        markers[key].setIcon(markerIcon(markerIndex + 1, key === activeKey));
+      });
+
+      const target = locations[days[index].focus];
+      const zoom = [1, 5].includes(index) ? 8 : 6;
+      map.flyTo(target.coords, zoom, { duration: .75 });
+      if (openPopup && markers[days[index].focus]) {
+        setTimeout(() => markers[days[index].focus].openPopup(), 500);
+      }
+    }
+
+    function animateLeg(leg, duration = 1150) {
+      return new Promise(resolve => {
+        if (movingMarker) map.removeLayer(movingMarker);
+        movingMarker = L.marker(leg.from, { icon: movingIcon(leg.mode), interactive: false }).addTo(map);
+        const start = performance.now();
+
+        function frame(now) {
+          const raw = Math.min(1, (now - start) / duration);
+          const eased = 1 - Math.pow(1 - raw, 3);
+          const lat = leg.from[0] + (leg.to[0] - leg.from[0]) * eased;
+          const lng = leg.from[1] + (leg.to[1] - leg.from[1]) * eased;
+          movingMarker.setLatLng([lat, lng]);
+          if (raw < 1 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            requestAnimationFrame(frame);
+          } else {
+            movingMarker.setLatLng(leg.to);
+            resolve();
+          }
+        }
+        requestAnimationFrame(frame);
+      });
+    }
+
+    async function playRoute() {
+      clearTimeout(playTimer);
+      const playButton = document.getElementById("play-route");
+      playButton.disabled = true;
+      playButton.textContent = "Маршрут воспроизводится";
+
+      for (let i = 0; i < days.length; i++) {
+        setActiveDay(i, false);
+        const dayLegs = days[i].legs.map(id => legs.find(leg => leg.id === id)).filter(Boolean);
+        if (dayLegs.length) {
+          for (const leg of dayLegs) await animateLeg(leg);
+        } else {
+          await new Promise(resolve => setTimeout(resolve, 900));
+        }
+      }
+
+      if (movingMarker) {
+        map.removeLayer(movingMarker);
+        movingMarker = null;
+      }
+      map.fitBounds(routeBounds.pad(.28), { padding: [28, 28] });
+      playButton.disabled = false;
+      playButton.textContent = "Показать маршрут";
+    }
+
+    document.querySelectorAll(".day-card").forEach(card => {
+      card.addEventListener("click", () => {
+        clearTimeout(playTimer);
+        if (movingMarker) {
+          map.removeLayer(movingMarker);
+          movingMarker = null;
+        }
+        setActiveDay(Number(card.dataset.day));
+      });
+    });
+
+    document.getElementById("play-route").addEventListener("click", playRoute);
+    document.getElementById("show-all").addEventListener("click", () => {
+      document.querySelectorAll(".day-card").forEach(card => card.setAttribute("aria-pressed", "false"));
+      legs.forEach(leg => lineLayers.get(leg.id).setStyle(styleFor(leg.style, true)));
+      markerOrder.forEach((key, i) => markers[key].setIcon(markerIcon(i + 1)));
+      if (movingMarker) {
+        map.removeLayer(movingMarker);
+        movingMarker = null;
+      }
+      map.fitBounds(routeBounds.pad(.28), { padding: [28, 28] });
+    });
+
+    window.addEventListener("resize", () => map.invalidateSize());
+    setTimeout(() => {
+      map.invalidateSize();
+      window.scrollTo(0, 0);
+    }, 200);
+  </script>
+</body>
+</html>
+
