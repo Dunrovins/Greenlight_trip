@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Интерактивный маршрут поездки ZOLT по производителям BESS в Китае, 22–29 ноября 2026 года.">
   <title>ZOLT · China BESS supplier trip · 22–29 November 2026</title>
-  <link rel="preconnect" href="https://unpkg.com">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
   <style>
     :root {
       --paper: #ffffff;
@@ -17,8 +15,6 @@
       --accent: #e4002b;
       --accent-dark: #a6001f;
       --route-idle: #bfc0c4;
-      --map-water: #f1f2f3;
-      --map-land: #fafafa;
       --max: 1500px;
     }
 
@@ -160,21 +156,47 @@
       border-bottom: 1px solid var(--ink);
     }
 
-    .map-panel {
+    .journey-panel {
       position: relative;
       min-width: 0;
       border-right: 1px solid var(--ink);
+      overflow: hidden;
+      background: var(--field);
     }
 
-    #trip-map {
+    .journey-stage {
+      position: relative;
       height: 720px;
       width: 100%;
-      background: var(--map-water);
+      background:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px),
+        var(--field);
+      background-size: 64px 64px;
     }
 
-    .map-key {
+    .journey-stage svg { display: block; width: 100%; height: 100%; }
+
+    .journey-caption {
       position: absolute;
-      z-index: 800;
+      top: 18px;
+      left: 20px;
+      z-index: 2;
+      max-width: 280px;
+    }
+
+    .journey-caption strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.05;
+      letter-spacing: -.03em;
+    }
+
+    .journey-caption span { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; }
+
+    .journey-key {
+      position: absolute;
+      z-index: 2;
       left: 16px;
       bottom: 16px;
       display: flex;
@@ -261,62 +283,42 @@
     .day-meta { display: block; margin-top: 3px; color: var(--muted); font-size: 13px; }
     .day-note { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; }
 
-    .route-label {
-      background: var(--paper);
-      border: 1px solid var(--ink);
-      border-radius: 0;
-      box-shadow: none;
-      color: var(--ink);
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 6px;
+    .scheme-leg {
+      fill: none;
+      stroke: var(--route-idle);
+      stroke-width: 5;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+      opacity: .72;
+      transition: stroke .25s ease, stroke-width .25s ease, opacity .25s ease;
     }
 
-    .route-label::before { display: none; }
+    .scheme-leg.air { stroke-dasharray: 12 11; }
+    .scheme-leg.road { stroke-width: 2; }
+    .scheme-leg.is-active, .scheme-leg.show-all { stroke: var(--accent); opacity: 1; stroke-width: 7; }
+    .scheme-leg.road.is-active, .scheme-leg.road.show-all { stroke-width: 4; }
 
-    .numbered-marker {
-      width: 36px;
-      height: 36px;
-      display: grid;
-      place-items: center;
-      border: 2px solid var(--paper);
-      border-radius: 50%;
-      background: var(--ink);
-      color: var(--paper);
-      box-shadow: 0 0 0 1px var(--ink);
-      font-size: 13px;
-      font-weight: 700;
+    .station circle {
+      fill: var(--paper);
+      stroke: var(--ink);
+      stroke-width: 3;
+      transition: fill .25s ease, stroke .25s ease;
     }
 
-    .numbered-marker.is-active { background: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+    .station text { fill: var(--ink); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+    .station .code { font-size: 25px; font-weight: 700; letter-spacing: -.04em; }
+    .station .name { font-size: 12px; font-weight: 700; }
+    .station .date { fill: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .08em; }
+    .station.is-active circle { fill: var(--accent); stroke: var(--accent); }
+    .station.is-active .code { fill: var(--paper); }
 
-    .moving-marker {
-      min-width: 68px;
-      height: 30px;
-      display: grid;
-      place-items: center;
-      border: 2px solid var(--paper);
-      background: var(--accent);
-      color: var(--paper);
-      box-shadow: 0 0 0 1px var(--accent);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .05em;
-      text-transform: uppercase;
-    }
+    .direction-label { fill: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; }
+    .direction-arrow { fill: var(--accent); }
 
-    .leaflet-popup-content-wrapper,
-    .leaflet-popup-tip {
-      border-radius: 0;
-      background: var(--paper);
-      color: var(--ink);
-      box-shadow: 0 4px 18px rgba(0,0,0,.18);
-    }
-
-    .leaflet-popup-content { margin: 12px 14px; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
-    .popup-date { color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; }
-    .popup-title { margin-top: 3px; font-size: 15px; font-weight: 700; }
-    .popup-copy { margin-top: 4px; font-size: 12px; color: var(--muted); }
+    .vehicle { opacity: 0; pointer-events: none; }
+    .vehicle.is-visible { opacity: 1; }
+    .vehicle rect { fill: var(--accent); stroke: var(--paper); stroke-width: 3; }
+    .vehicle text { fill: var(--paper); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-anchor: middle; }
 
     .details {
       display: grid;
@@ -357,8 +359,8 @@
       .summary-item:nth-child(2) { border-right: 0; }
       .summary-item:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
       .workspace { grid-template-columns: 1fr; }
-      .map-panel { border-right: 0; border-bottom: 1px solid var(--ink); }
-      #trip-map { height: 560px; }
+      .journey-panel { border-right: 0; border-bottom: 1px solid var(--ink); }
+      .journey-stage { height: 560px; }
       .day-list { grid-template-columns: 1fr 1fr; }
       .day-card:nth-child(odd) { border-right: 1px solid var(--line); }
     }
@@ -375,7 +377,7 @@
       .button.primary { grid-column: 1 / -1; }
       .summary-item strong { font-size: 20px; overflow-wrap: anywhere; }
       .summary-item span { overflow-wrap: anywhere; }
-      #trip-map { height: 460px; }
+      .journey-stage { height: 470px; }
       .day-list { grid-template-columns: 1fr; }
       .day-card:nth-child(odd) { border-right: 0; }
       .details { grid-template-columns: 1fr; }
@@ -386,9 +388,9 @@
 
     @media print {
       .shell { max-width: none; padding: 0; }
-      .controls, .leaflet-control-container { display: none !important; }
+      .controls { display: none !important; }
       .workspace { min-height: 0; grid-template-columns: 1.45fr .8fr; }
-      #trip-map { height: 590px; }
+      .journey-stage { height: 590px; }
       .day-card { padding: 10px 12px; }
       .date-number { font-size: 26px; }
       .day-note { display: none; }
@@ -397,6 +399,7 @@
 
     @media (prefers-reduced-motion: reduce) {
       * { scroll-behavior: auto !important; transition: none !important; }
+      .vehicle { display: none; }
     }
   </style>
 </head>
@@ -429,10 +432,44 @@
       </div>
     </section>
 
-    <section class="workspace" aria-label="Интерактивная карта и расписание">
-      <div class="map-panel">
-        <div id="trip-map" role="application" aria-label="Интерактивная карта маршрута из Шанхая через Саньмэнься, Гуанчжоу, Хуэйчжоу и Нинбо обратно в Шанхай"></div>
-        <div class="map-key" aria-label="Условные обозначения">
+    <section class="workspace" aria-label="Анимированная схема маршрута и расписание">
+      <div class="journey-panel">
+        <div class="journey-stage" id="journey-stage">
+          <div class="journey-caption"><strong>Казань → Китай → Казань</strong><span>Схема показывает последовательность поездки, а не географический масштаб.</span></div>
+          <svg viewBox="0 0 1000 700" role="img" aria-label="Анимированная транспортная схема поездки из Казани в Шанхай, по производителям Китая и обратно в Казань">
+            <defs>
+              <marker id="arrow-red" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path class="direction-arrow" d="M0,0 L9,4.5 L0,9 Z"></path></marker>
+            </defs>
+
+            <path id="arrival" class="scheme-leg air" data-day="0" d="M120 100 C300 36 590 36 805 145"></path>
+            <path id="shanghai-sanmenxia" class="scheme-leg rail" data-day="0" d="M805 145 C700 190 545 206 390 240"></path>
+            <path id="sanmenxia-zhengzhou" class="scheme-leg rail" data-day="2" d="M390 240 L520 300"></path>
+            <path id="zhengzhou-guangzhou" class="scheme-leg air" data-day="2" d="M520 300 C420 336 335 392 310 470"></path>
+            <path id="guangzhou-huizhou" class="scheme-leg road" data-day="3" d="M310 470 L455 520"></path>
+            <path id="huizhou-shenzhen" class="scheme-leg road" data-day="4" d="M455 520 L585 585"></path>
+            <path id="shenzhen-cixi" class="scheme-leg air" data-day="4" d="M585 585 C760 590 865 520 840 425"></path>
+            <path id="cixi-ningbo" class="scheme-leg road" data-day="6" d="M840 425 L750 470"></path>
+            <path id="ningbo-shanghai" class="scheme-leg rail" data-day="6" d="M750 470 C885 390 895 255 805 145"></path>
+            <path id="departure" class="scheme-leg air" data-day="7" d="M805 145 C590 36 300 36 120 100"></path>
+
+            <text class="direction-label" x="286" y="54">ИЗ КАЗАНИ · НА ЮГО-ВОСТОК</text>
+            <path d="M286 67 L458 67" stroke="#e4002b" stroke-width="2" marker-end="url(#arrow-red)"></path>
+            <text class="direction-label" x="286" y="94">В КАЗАНЬ · НА СЕВЕРО-ЗАПАД</text>
+            <path d="M458 107 L286 107" stroke="#e4002b" stroke-width="2" marker-end="url(#arrow-red)"></path>
+
+            <g class="station" data-station="kazan" transform="translate(120 100)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">KZN</text><text class="name" x="-34" y="58">КАЗАНЬ</text><text class="date" x="-34" y="73">22 / 29 NOV</text></g>
+            <g class="station" data-station="shanghai" transform="translate(805 145)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">PVG</text><text class="name" x="-34" y="58">ШАНХАЙ</text><text class="date" x="-34" y="73">22 / 28 / 29 NOV</text></g>
+            <g class="station" data-station="sanmenxia" transform="translate(390 240)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">EAST</text><text class="name" x="-34" y="58">SANMENXIA</text><text class="date" x="-34" y="73">23–24 NOV</text></g>
+            <g class="station" data-station="zhengzhou" transform="translate(520 300)"><circle r="18"></circle><text class="name" x="-20" y="44">ZHENGZHOU</text><text class="date" x="-20" y="59">24 NOV</text></g>
+            <g class="station" data-station="guangzhou" transform="translate(310 470)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">VOLT</text><text class="name" x="-34" y="58">GUANGZHOU</text><text class="date" x="-34" y="73">25 NOV</text></g>
+            <g class="station" data-station="huizhou" transform="translate(455 520)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">BSL</text><text class="name" x="-34" y="58">HUIZHOU</text><text class="date" x="-34" y="73">26 NOV</text></g>
+            <g class="station" data-station="shenzhen" transform="translate(585 585)"><circle r="18"></circle><text class="name" x="-20" y="44">SHENZHEN</text><text class="date" x="-20" y="59">26 NOV</text></g>
+            <g class="station" data-station="cixi" transform="translate(840 425)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">DEYE</text><text class="name" x="-34" y="58">CIXI / NINGBO</text><text class="date" x="-34" y="73">27–28 NOV</text></g>
+
+            <g class="vehicle" id="vehicle"><rect x="-38" y="-15" width="76" height="30"></rect><text id="vehicle-label" y="4">FLIGHT</text></g>
+          </svg>
+        </div>
+        <div class="journey-key" aria-label="Условные обозначения">
           <span class="key-item"><span class="key-line"></span>поезд</span>
           <span class="key-item"><span class="key-line air"></span>самолёт</span>
           <span class="key-item"><span class="key-line road"></span>автомобиль</span>
@@ -492,7 +529,7 @@
       <div class="detail-block">
         <h2>Проверки перед бронированием</h2>
         <ul class="source-list">
-          <li>Подтвердить прилёт 22 ноября и точное время по билету; 09:00 на карте пока является рабочим временем.</li>
+          <li>Подтвердить прилёт 22 ноября и точное время по билету; 09:00 в схеме пока является рабочим временем.</li>
           <li>Получить точный адрес и пропуск на производство EAST в Sanmenxia.</li>
           <li>Подтвердить вечерние рейсы Zhengzhou → Guangzhou 24 ноября и Shenzhen → Ningbo 26 ноября.</li>
           <li>Подтвердить у Deye, что встреча 27 ноября проходит именно на площадке ESS в Cixi.</li>
@@ -501,215 +538,104 @@
     </section>
 
     <footer>
-      <p>Время с символом ≈ является плановым. Номера внутренних рейсов и поездов фиксируются после подтверждения встреч и открытия продажи билетов. Версия маршрута: 5 ноября 2026 года.</p>
-      <p><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap</a></p>
+      <p>Время с символом ≈ является плановым. Номера внутренних рейсов и поездов фиксируются после подтверждения встреч и открытия продажи билетов. Версия маршрута: 6 ноября 2026 года.</p>
+      <p>Схема маршрута не является географической картой.</p>
     </footer>
   </main>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
-    const locations = {
-      pvg: { name: "Shanghai Pudong", coords: [31.1443, 121.8083], date: "22 / 29 NOV", copy: "Прилёт и обратный международный рейс." },
-      hongqiao: { name: "Shanghai Hongqiao", coords: [31.1979, 121.3270], date: "22 / 28 NOV", copy: "Станция скоростных поездов." },
-      sanmenxia: { name: "EAST · Sanmenxia", coords: [34.7726, 111.2004], date: "23–24 NOV", copy: "Производственная база BESS; точный адрес проходной ожидается." },
-      zhengzhou: { name: "Zhengzhou", coords: [34.5197, 113.8409], date: "24 NOV", copy: "Пересадка с высокоскоростного поезда на рейс в Guangzhou." },
-      guangzhou: { name: "Voltgen · Guangzhou", coords: [23.1818, 113.2590], date: "25 NOV", copy: "Офис на Sanyuanli Avenue, Baiyun District." },
-      huizhou: { name: "BSLBATT · Huizhou", coords: [23.0310, 114.3390], date: "26 NOV", copy: "Производственная площадка в Zhongkai High-tech Zone." },
-      shenzhen: { name: "Shenzhen Bao'an", coords: [22.6393, 113.8107], date: "26 NOV", copy: "Вечерний прямой рейс в Ningbo." },
-      cixi: { name: "Deye ESS · Cixi", coords: [30.1697, 121.2665], date: "27–28 NOV", copy: "Площадка ESS в Binhai Economic Development Zone; затем трансфер на поезд в Shanghai." },
-      ningbo: { name: "Ningbo", coords: [29.8683, 121.5440], date: "28 NOV", copy: "Скоростной поезд обратно в Shanghai." }
+    const days = [
+      { focus: "sanmenxia", legs: ["arrival", "shanghai-sanmenxia"] },
+      { focus: "sanmenxia", legs: [] },
+      { focus: "guangzhou", legs: ["sanmenxia-zhengzhou", "zhengzhou-guangzhou"] },
+      { focus: "huizhou", legs: ["guangzhou-huizhou"] },
+      { focus: "cixi", legs: ["huizhou-shenzhen", "shenzhen-cixi"] },
+      { focus: "cixi", legs: [] },
+      { focus: "shanghai", legs: ["cixi-ningbo", "ningbo-shanghai"] },
+      { focus: "kazan", legs: ["departure"] }
+    ];
+
+    const modes = {
+      arrival: "САМОЛЁТ", "shanghai-sanmenxia": "ПОЕЗД", "sanmenxia-zhengzhou": "ПОЕЗД",
+      "zhengzhou-guangzhou": "САМОЛЁТ", "guangzhou-huizhou": "АВТО", "huizhou-shenzhen": "АВТО",
+      "shenzhen-cixi": "САМОЛЁТ", "cixi-ningbo": "АВТО", "ningbo-shanghai": "ПОЕЗД", departure: "САМОЛЁТ"
     };
 
-    const days = [
-      { index: 0, focus: "sanmenxia", legs: ["arrival", "shanghai-sanmenxia"] },
-      { index: 1, focus: "sanmenxia", legs: [] },
-      { index: 2, focus: "guangzhou", legs: ["sanmenxia-zhengzhou", "zhengzhou-guangzhou"] },
-      { index: 3, focus: "huizhou", legs: ["guangzhou-huizhou"] },
-      { index: 4, focus: "cixi", legs: ["huizhou-shenzhen", "shenzhen-cixi"] },
-      { index: 5, focus: "cixi", legs: [] },
-      { index: 6, focus: "pvg", legs: ["cixi-ningbo", "ningbo-hongqiao", "hongqiao-pvg"] },
-      { index: 7, focus: "pvg", legs: ["departure"] }
-    ];
+    const routePaths = [...document.querySelectorAll(".scheme-leg")];
+    const stations = [...document.querySelectorAll(".station")];
+    const vehicle = document.getElementById("vehicle");
+    const vehicleLabel = document.getElementById("vehicle-label");
+    let cancelled = false;
 
-    const legs = [
-      { id: "arrival", from: [33.6, 126.0], to: locations.pvg.coords, mode: "AIR", style: "air", day: 0 },
-      { id: "shanghai-sanmenxia", from: locations.hongqiao.coords, to: locations.sanmenxia.coords, mode: "TRAIN", style: "rail", day: 0 },
-      { id: "sanmenxia-zhengzhou", from: locations.sanmenxia.coords, to: locations.zhengzhou.coords, mode: "TRAIN", style: "rail", day: 2 },
-      { id: "zhengzhou-guangzhou", from: locations.zhengzhou.coords, to: locations.guangzhou.coords, mode: "FLIGHT", style: "air", day: 2 },
-      { id: "guangzhou-huizhou", from: locations.guangzhou.coords, to: locations.huizhou.coords, mode: "CAR", style: "road", day: 3 },
-      { id: "huizhou-shenzhen", from: locations.huizhou.coords, to: locations.shenzhen.coords, mode: "CAR", style: "road", day: 4 },
-      { id: "shenzhen-cixi", from: locations.shenzhen.coords, to: locations.cixi.coords, mode: "FLIGHT", style: "air", day: 4 },
-      { id: "cixi-ningbo", from: locations.cixi.coords, to: locations.ningbo.coords, mode: "CAR", style: "road", day: 6 },
-      { id: "ningbo-hongqiao", from: locations.ningbo.coords, to: locations.hongqiao.coords, mode: "TRAIN", style: "rail", day: 6 },
-      { id: "hongqiao-pvg", from: locations.hongqiao.coords, to: locations.pvg.coords, mode: "CAR", style: "road", day: 6 },
-      { id: "departure", from: locations.pvg.coords, to: [36.0, 125.8], mode: "FLIGHT", style: "air", day: 7 }
-    ];
-
-    const map = L.map("trip-map", {
-      zoomControl: true,
-      attributionControl: true,
-      minZoom: 4,
-      maxZoom: 13
-    });
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: "&copy; OpenStreetMap contributors"
-    }).addTo(map);
-
-    const markerOrder = ["pvg", "sanmenxia", "guangzhou", "huizhou", "cixi"];
-    const markers = {};
-
-    function markerIcon(label, active = false) {
-      return L.divIcon({
-        className: "",
-        html: `<div class="numbered-marker${active ? " is-active" : ""}">${label}</div>`,
-        iconSize: [36, 36],
-        iconAnchor: [18, 18],
-        popupAnchor: [0, -20]
-      });
-    }
-
-    markerOrder.forEach((key, i) => {
-      const item = locations[key];
-      const marker = L.marker(item.coords, { icon: markerIcon(i + 1) }).addTo(map);
-      marker.bindTooltip(item.date, { permanent: true, direction: "top", offset: [0, -21], className: "route-label" });
-      marker.bindPopup(`<div class="popup-date">${item.date}</div><div class="popup-title">${item.name}</div><div class="popup-copy">${item.copy}</div>`);
-      markers[key] = marker;
-    });
-
-    const lineLayers = new Map();
-    const styleFor = (style, active = false) => ({
-      color: active ? "#e4002b" : "#bfc0c4",
-      weight: style === "road" ? (active ? 3 : 2) : (active ? 5 : 3),
-      opacity: active ? 1 : .58,
-      dashArray: style === "air" ? "10 9" : null,
-      lineCap: "square",
-      lineJoin: "miter"
-    });
-
-    legs.forEach(leg => {
-      const line = L.polyline([leg.from, leg.to], styleFor(leg.style, true)).addTo(map);
-      line.bindTooltip(leg.mode, { sticky: true, className: "route-label" });
-      lineLayers.set(leg.id, line);
-    });
-
-    const allCoords = Object.values(locations).map(item => item.coords);
-    const routeBounds = L.latLngBounds(allCoords);
-    map.fitBounds(routeBounds.pad(.28), { padding: [28, 28] });
-
-    let movingMarker = null;
-    let playTimer = null;
-    let activeDay = -1;
-
-    function movingIcon(mode) {
-      return L.divIcon({
-        className: "",
-        html: `<div class="moving-marker">${mode}</div>`,
-        iconSize: [72, 30],
-        iconAnchor: [36, 15]
-      });
-    }
-
-    function setActiveDay(index, openPopup = true) {
-      activeDay = index;
+    function setActiveDay(index) {
       document.querySelectorAll(".day-card").forEach((card, cardIndex) => {
         card.setAttribute("aria-pressed", cardIndex === index ? "true" : "false");
       });
-
-      legs.forEach(leg => {
-        lineLayers.get(leg.id).setStyle(styleFor(leg.style, leg.day === index));
-      });
-
-      markerOrder.forEach((key, markerIndex) => {
-        const activeKey = days[index].focus;
-        markers[key].setIcon(markerIcon(markerIndex + 1, key === activeKey));
-      });
-
-      const target = locations[days[index].focus];
-      const zoom = [1, 5].includes(index) ? 8 : 6;
-      map.flyTo(target.coords, zoom, { duration: .75 });
-      if (openPopup && markers[days[index].focus]) {
-        setTimeout(() => markers[days[index].focus].openPopup(), 500);
-      }
+      routePaths.forEach(path => path.classList.toggle("is-active", Number(path.dataset.day) === index));
+      stations.forEach(station => station.classList.toggle("is-active", station.dataset.station === days[index].focus));
     }
 
-    function animateLeg(leg, duration = 1150) {
+    function animateLeg(id, duration = 1050) {
       return new Promise(resolve => {
-        if (movingMarker) map.removeLayer(movingMarker);
-        movingMarker = L.marker(leg.from, { icon: movingIcon(leg.mode), interactive: false }).addTo(map);
+        const path = document.getElementById(id);
+        const length = path.getTotalLength();
+        vehicleLabel.textContent = modes[id];
+        vehicle.classList.add("is-visible");
         const start = performance.now();
-
         function frame(now) {
+          if (cancelled) { vehicle.classList.remove("is-visible"); resolve(); return; }
           const raw = Math.min(1, (now - start) / duration);
           const eased = 1 - Math.pow(1 - raw, 3);
-          const lat = leg.from[0] + (leg.to[0] - leg.from[0]) * eased;
-          const lng = leg.from[1] + (leg.to[1] - leg.from[1]) * eased;
-          movingMarker.setLatLng([lat, lng]);
+          const point = path.getPointAtLength(length * eased);
+          vehicle.setAttribute("transform", `translate(${point.x} ${point.y})`);
           if (raw < 1 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
             requestAnimationFrame(frame);
-          } else {
-            movingMarker.setLatLng(leg.to);
-            resolve();
-          }
+          } else resolve();
         }
         requestAnimationFrame(frame);
       });
     }
 
     async function playRoute() {
-      clearTimeout(playTimer);
+      cancelled = false;
       const playButton = document.getElementById("play-route");
       playButton.disabled = true;
       playButton.textContent = "Маршрут воспроизводится";
 
       for (let i = 0; i < days.length; i++) {
-        setActiveDay(i, false);
-        const dayLegs = days[i].legs.map(id => legs.find(leg => leg.id === id)).filter(Boolean);
+        if (cancelled) break;
+        setActiveDay(i);
+        const dayLegs = days[i].legs;
         if (dayLegs.length) {
-          for (const leg of dayLegs) await animateLeg(leg);
+          for (const id of dayLegs) await animateLeg(id);
         } else {
           await new Promise(resolve => setTimeout(resolve, 900));
         }
       }
-
-      if (movingMarker) {
-        map.removeLayer(movingMarker);
-        movingMarker = null;
-      }
-      map.fitBounds(routeBounds.pad(.28), { padding: [28, 28] });
+      vehicle.classList.remove("is-visible");
       playButton.disabled = false;
       playButton.textContent = "Показать маршрут";
     }
 
     document.querySelectorAll(".day-card").forEach(card => {
       card.addEventListener("click", () => {
-        clearTimeout(playTimer);
-        if (movingMarker) {
-          map.removeLayer(movingMarker);
-          movingMarker = null;
-        }
+        cancelled = true;
+        vehicle.classList.remove("is-visible");
         setActiveDay(Number(card.dataset.day));
       });
     });
 
     document.getElementById("play-route").addEventListener("click", playRoute);
     document.getElementById("show-all").addEventListener("click", () => {
+      cancelled = true;
+      vehicle.classList.remove("is-visible");
       document.querySelectorAll(".day-card").forEach(card => card.setAttribute("aria-pressed", "false"));
-      legs.forEach(leg => lineLayers.get(leg.id).setStyle(styleFor(leg.style, true)));
-      markerOrder.forEach((key, i) => markers[key].setIcon(markerIcon(i + 1)));
-      if (movingMarker) {
-        map.removeLayer(movingMarker);
-        movingMarker = null;
-      }
-      map.fitBounds(routeBounds.pad(.28), { padding: [28, 28] });
+      routePaths.forEach(path => { path.classList.remove("is-active"); path.classList.add("show-all"); });
+      stations.forEach(station => station.classList.remove("is-active"));
     });
 
-    window.addEventListener("resize", () => map.invalidateSize());
-    setTimeout(() => {
-      map.invalidateSize();
-      window.scrollTo(0, 0);
-    }, 200);
+    routePaths.forEach(path => path.classList.add("show-all"));
+    window.scrollTo(0, 0);
   </script>
 </body>
 </html>
