@@ -125,6 +125,21 @@
 
     .notice strong { color: var(--accent); }
 
+    .option-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--ink);
+    }
+
+    .option-copy strong { display: block; font-size: 17px; }
+    .option-copy span { display: block; margin-top: 2px; color: var(--muted); font-size: 13px; }
+    .option-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .option-tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+    .route-option[hidden] { display: none; }
+
     .controls {
       display: flex;
       gap: 8px;
@@ -371,6 +386,8 @@
       h1 { font-size: 34px; line-height: .98; overflow-wrap: anywhere; }
       .date-lockup strong { font-size: 62px; }
       .notice { align-items: flex-start; flex-direction: column; }
+      .option-bar { align-items: flex-start; flex-direction: column; }
+      .option-tabs { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
       .notice > div:first-child { max-width: 100%; overflow-wrap: anywhere; }
       .controls { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
       .button { width: 100%; padding-inline: 8px; }
@@ -418,13 +435,21 @@
 
     <section class="summary-grid" aria-label="Краткое описание поездки">
       <div class="summary-item"><strong>4</strong><span>производителя в маршруте</span></div>
-      <div class="summary-item"><strong>27 ноября</strong><span>выбранная дата посещения Deye</span></div>
-      <div class="summary-item"><strong>2</strong><span>внутренних перелёта</span></div>
+      <div class="summary-item"><strong id="deye-date">26 ноября</strong><span>выбранная дата посещения Deye</span></div>
+      <div class="summary-item"><strong id="flight-count">3</strong><span>внутренних перелёта</span></div>
       <div class="summary-item"><strong>29 ноября</strong><span>вылет из Шанхая в воскресенье</span></div>
     </section>
 
+    <section class="option-bar" aria-label="Выбор варианта маршрута">
+      <div class="option-copy"><strong>Два порядка поездки</strong><span id="option-status" aria-live="polite">Вариант B совместим с прилётом MU5066 утром 23 ноября.</span></div>
+      <div class="option-tabs" role="tablist" aria-label="Варианты маршрута">
+        <button class="button option-tab" id="option-a" type="button" role="tab" data-option="a" aria-selected="false">A · сначала EAST</button>
+        <button class="button option-tab" id="option-b" type="button" role="tab" data-option="b" aria-selected="true">B · сначала юг</button>
+      </div>
+    </section>
+
     <section class="notice" aria-label="Актуальные изменения">
-      <div><strong>Маршрут скорректирован:</strong> KEHUA исключена. Deye запланирована на 27 ноября — это минимизирует обратные переезды.</div>
+      <div id="route-notice"><strong>Вариант B:</strong> MU5066 прилетает 23 ноября в 09:00. После пересадки — дневной рейс из Pudong в Guangzhou.</div>
       <div class="controls">
         <button class="button primary" id="play-route" type="button">Показать маршрут</button>
         <button class="button" id="show-all" type="button">Весь маршрут</button>
@@ -441,16 +466,31 @@
               <marker id="arrow-red" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path class="direction-arrow" d="M0,0 L9,4.5 L0,9 Z"></path></marker>
             </defs>
 
-            <path id="arrival" class="scheme-leg air" data-day="0" d="M120 100 C300 36 590 36 805 145"></path>
-            <path id="shanghai-sanmenxia" class="scheme-leg rail" data-day="0" d="M805 145 C700 190 545 206 390 240"></path>
-            <path id="sanmenxia-zhengzhou" class="scheme-leg rail" data-day="2" d="M390 240 L520 300"></path>
-            <path id="zhengzhou-guangzhou" class="scheme-leg air" data-day="2" d="M520 300 C420 336 335 392 310 470"></path>
-            <path id="guangzhou-huizhou" class="scheme-leg road" data-day="3" d="M310 470 L455 520"></path>
-            <path id="huizhou-shenzhen" class="scheme-leg road" data-day="4" d="M455 520 L585 585"></path>
-            <path id="shenzhen-cixi" class="scheme-leg air" data-day="4" d="M585 585 C760 590 865 520 840 425"></path>
-            <path id="cixi-ningbo" class="scheme-leg road" data-day="6" d="M840 425 L750 470"></path>
-            <path id="ningbo-shanghai" class="scheme-leg rail" data-day="6" d="M750 470 C885 390 895 255 805 145"></path>
-            <path id="departure" class="scheme-leg air" data-day="7" d="M805 145 C590 36 300 36 120 100"></path>
+            <g class="route-option" data-route="a" hidden>
+              <path id="a-arrival" class="scheme-leg air" d="M120 100 C300 36 590 36 805 145"></path>
+              <path id="a-shanghai-sanmenxia" class="scheme-leg rail" d="M805 145 C700 190 545 206 390 240"></path>
+              <path id="a-sanmenxia-zhengzhou" class="scheme-leg rail" d="M390 240 L520 300"></path>
+              <path id="a-zhengzhou-guangzhou" class="scheme-leg air" d="M520 300 C420 336 335 392 310 470"></path>
+              <path id="a-guangzhou-huizhou" class="scheme-leg road" d="M310 470 L455 520"></path>
+              <path id="a-huizhou-shenzhen" class="scheme-leg road" d="M455 520 L585 585"></path>
+              <path id="a-shenzhen-cixi" class="scheme-leg air" d="M585 585 C760 590 865 520 840 425"></path>
+              <path id="a-cixi-ningbo" class="scheme-leg road" d="M840 425 L750 470"></path>
+              <path id="a-ningbo-shanghai" class="scheme-leg rail" d="M750 470 C885 390 895 255 805 145"></path>
+              <path id="a-departure" class="scheme-leg air" d="M805 145 C590 36 300 36 120 100"></path>
+            </g>
+
+            <g class="route-option" data-route="b">
+              <path id="b-arrival" class="scheme-leg air" d="M120 100 C300 36 590 36 805 145"></path>
+              <path id="b-shanghai-guangzhou" class="scheme-leg air" d="M805 145 C670 260 475 360 310 470"></path>
+              <path id="b-guangzhou-huizhou" class="scheme-leg road" d="M310 470 L455 520"></path>
+              <path id="b-huizhou-shenzhen" class="scheme-leg road" d="M455 520 L585 585"></path>
+              <path id="b-shenzhen-cixi" class="scheme-leg air" d="M585 585 C760 590 865 520 840 425"></path>
+              <path id="b-cixi-ningbo" class="scheme-leg road" d="M840 425 L750 470"></path>
+              <path id="b-ningbo-zhengzhou" class="scheme-leg air" d="M750 470 C690 355 610 312 520 300"></path>
+              <path id="b-zhengzhou-sanmenxia" class="scheme-leg rail" d="M520 300 L390 240"></path>
+              <path id="b-sanmenxia-shanghai" class="scheme-leg rail" d="M390 240 C545 206 700 190 805 145"></path>
+              <path id="b-departure" class="scheme-leg air" d="M805 145 C590 36 300 36 120 100"></path>
+            </g>
 
             <text class="direction-label" x="286" y="54">ИЗ КАЗАНИ · НА ЮГО-ВОСТОК</text>
             <path d="M286 67 L458 67" stroke="#e4002b" stroke-width="2" marker-end="url(#arrow-red)"></path>
@@ -459,12 +499,12 @@
 
             <g class="station" data-station="kazan" transform="translate(120 100)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">KZN</text><text class="name" x="-34" y="58">КАЗАНЬ</text><text class="date" x="-34" y="73">22 / 29 NOV</text></g>
             <g class="station" data-station="shanghai" transform="translate(805 145)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">PVG</text><text class="name" x="-34" y="58">ШАНХАЙ</text><text class="date" x="-34" y="73">22 / 28 / 29 NOV</text></g>
-            <g class="station" data-station="sanmenxia" transform="translate(390 240)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">EAST</text><text class="name" x="-34" y="58">SANMENXIA</text><text class="date" x="-34" y="73">23–24 NOV</text></g>
+            <g class="station" data-station="sanmenxia" transform="translate(390 240)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">EAST</text><text class="name" x="-34" y="58">SANMENXIA</text><text class="date" id="station-date-sanmenxia" x="-34" y="73">27–28 NOV</text></g>
             <g class="station" data-station="zhengzhou" transform="translate(520 300)"><circle r="18"></circle><text class="name" x="-20" y="44">ZHENGZHOU</text><text class="date" x="-20" y="59">24 NOV</text></g>
-            <g class="station" data-station="guangzhou" transform="translate(310 470)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">VOLT</text><text class="name" x="-34" y="58">GUANGZHOU</text><text class="date" x="-34" y="73">25 NOV</text></g>
-            <g class="station" data-station="huizhou" transform="translate(455 520)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">BSL</text><text class="name" x="-34" y="58">HUIZHOU</text><text class="date" x="-34" y="73">26 NOV</text></g>
+            <g class="station" data-station="guangzhou" transform="translate(310 470)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">VOLT</text><text class="name" x="-34" y="58">GUANGZHOU</text><text class="date" id="station-date-guangzhou" x="-34" y="73">23–24 NOV</text></g>
+            <g class="station" data-station="huizhou" transform="translate(455 520)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">BSL</text><text class="name" x="-34" y="58">HUIZHOU</text><text class="date" id="station-date-huizhou" x="-34" y="73">24–25 NOV</text></g>
             <g class="station" data-station="shenzhen" transform="translate(585 585)"><circle r="18"></circle><text class="name" x="-20" y="44">SHENZHEN</text><text class="date" x="-20" y="59">26 NOV</text></g>
-            <g class="station" data-station="cixi" transform="translate(840 425)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">DEYE</text><text class="name" x="-34" y="58">CIXI / NINGBO</text><text class="date" x="-34" y="73">27–28 NOV</text></g>
+            <g class="station" data-station="cixi" transform="translate(840 425)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">DEYE</text><text class="name" x="-34" y="58">CIXI / NINGBO</text><text class="date" id="station-date-cixi" x="-34" y="73">26 NOV</text></g>
 
             <g class="vehicle" id="vehicle"><rect x="-38" y="-15" width="76" height="30"></rect><text id="vehicle-label" y="4">FLIGHT</text></g>
           </svg>
@@ -481,40 +521,7 @@
           <strong>План поездки</strong>
           <span>Нажмите на день,<br>чтобы увидеть участок</span>
         </div>
-        <div class="day-list" id="day-list">
-          <button class="day-card" type="button" data-day="0" aria-pressed="false">
-            <span class="date-box"><span class="date-number">22</span><span class="date-month">вс · ноя</span></span>
-            <span><span class="day-title">Прилёт в Шанхай</span><span class="day-meta">≈09:00 · PVG → Hongqiao → Sanmenxia</span><span class="day-note">После паспортного контроля — прямой скоростной поезд. Прибытие вечером.</span></span>
-          </button>
-          <button class="day-card" type="button" data-day="1" aria-pressed="false">
-            <span class="date-box"><span class="date-number">23</span><span class="date-month">пн · ноя</span></span>
-            <span><span class="day-title">EAST · производство BESS</span><span class="day-meta">09:00–17:00 · Sanmenxia</span><span class="day-note">Производство, PACK, PCS/EMS, испытания и техническая сессия.</span></span>
-          </button>
-          <button class="day-card" type="button" data-day="2" aria-pressed="false">
-            <span class="date-box"><span class="date-number">24</span><span class="date-month">вт · ноя</span></span>
-            <span><span class="day-title">EAST и перелёт на юг</span><span class="day-meta">09:00–12:00 · Sanmenxia → Zhengzhou → Guangzhou</span><span class="day-note">Вторая техническая сессия, затем поезд и вечерний рейс.</span></span>
-          </button>
-          <button class="day-card" type="button" data-day="3" aria-pressed="false">
-            <span class="date-box"><span class="date-number">25</span><span class="date-month">ср · ноя</span></span>
-            <span><span class="day-title">Voltgen · встреча в офисе</span><span class="day-meta">09:30–12:00 · Guangzhou</span><span class="day-note">После встречи — автомобиль в Huizhou и ночёвка рядом с BSLBATT.</span></span>
-          </button>
-          <button class="day-card" type="button" data-day="4" aria-pressed="false">
-            <span class="date-box"><span class="date-number">26</span><span class="date-month">чт · ноя</span></span>
-            <span><span class="day-title">BSLBATT · завод</span><span class="day-meta">09:00–16:30 · Huizhou</span><span class="day-note">Заводская проверка. Вечером — трансфер в SZX и рейс в Ningbo.</span></span>
-          </button>
-          <button class="day-card" type="button" data-day="5" aria-pressed="false">
-            <span class="date-box"><span class="date-number">27</span><span class="date-month">пт · ноя</span></span>
-            <span><span class="day-title">Deye · производство BESS</span><span class="day-meta">09:00–17:00 · Cixi / Ningbo</span><span class="day-note">Выбран один из доступных дней: 25, 26 или 27 ноября.</span></span>
-          </button>
-          <button class="day-card" type="button" data-day="6" aria-pressed="false">
-            <span class="date-box"><span class="date-number">28</span><span class="date-month">сб · ноя</span></span>
-            <span><span class="day-title">Возвращение в Шанхай</span><span class="day-meta">Утро · Ningbo → Shanghai</span><span class="day-note">Скоростной поезд, резервный день и ночёвка рядом с Pudong.</span></span>
-          </button>
-          <button class="day-card" type="button" data-day="7" aria-pressed="false">
-            <span class="date-box"><span class="date-number">29</span><span class="date-month">вс · ноя</span></span>
-            <span><span class="day-title">Вылет в Казань</span><span class="day-meta">13:00 · MU5065 · PVG Terminal 1</span><span class="day-note">Плановое прибытие в Казань — 17:00 по местному времени.</span></span>
-          </button>
-        </div>
+        <div class="day-list" id="day-list"></div>
       </aside>
     </section>
 
@@ -529,57 +536,128 @@
       <div class="detail-block">
         <h2>Проверки перед бронированием</h2>
         <ul class="source-list">
-          <li>Подтвердить прилёт 22 ноября и точное время по билету; 09:00 в схеме пока является рабочим временем.</li>
+          <li><strong>MU5066:</strong> при вылете из Казани 22 ноября в 20:00 плановый прилёт в PVG — 23 ноября в 09:00, Terminal 1.</li>
+          <li>Подтвердить единый билет или достаточный запас на пересадку PVG → Guangzhou после международного прилёта.</li>
           <li>Получить точный адрес и пропуск на производство EAST в Sanmenxia.</li>
-          <li>Подтвердить вечерние рейсы Zhengzhou → Guangzhou 24 ноября и Shenzhen → Ningbo 26 ноября.</li>
-          <li>Подтвердить у Deye, что встреча 27 ноября проходит именно на площадке ESS в Cixi.</li>
+          <li>Подтвердить рейсы Shenzhen → Ningbo 25 ноября и Ningbo → Zhengzhou 27 ноября.</li>
+          <li>Подтвердить у Deye встречу 26 ноября на площадке ESS в Cixi и работу EAST утром в субботу, 28 ноября.</li>
         </ul>
       </div>
     </section>
 
     <footer>
-      <p>Время с символом ≈ является плановым. Номера внутренних рейсов и поездов фиксируются после подтверждения встреч и открытия продажи билетов. Версия маршрута: 6 ноября 2026 года.</p>
+      <p>Время с символом ≈ является плановым. Номера внутренних рейсов и поездов фиксируются после подтверждения встреч и открытия продажи билетов. Версия маршрута: 7 ноября 2026 года.</p>
       <p>Схема маршрута не является географической картой.</p>
     </footer>
   </main>
 
   <script>
-    const days = [
-      { focus: "sanmenxia", legs: ["arrival", "shanghai-sanmenxia"] },
-      { focus: "sanmenxia", legs: [] },
-      { focus: "guangzhou", legs: ["sanmenxia-zhengzhou", "zhengzhou-guangzhou"] },
-      { focus: "huizhou", legs: ["guangzhou-huizhou"] },
-      { focus: "cixi", legs: ["huizhou-shenzhen", "shenzhen-cixi"] },
-      { focus: "cixi", legs: [] },
-      { focus: "shanghai", legs: ["cixi-ningbo", "ningbo-shanghai"] },
-      { focus: "kazan", legs: ["departure"] }
-    ];
-
-    const modes = {
-      arrival: "САМОЛЁТ", "shanghai-sanmenxia": "ПОЕЗД", "sanmenxia-zhengzhou": "ПОЕЗД",
-      "zhengzhou-guangzhou": "САМОЛЁТ", "guangzhou-huizhou": "АВТО", "huizhou-shenzhen": "АВТО",
-      "shenzhen-cixi": "САМОЛЁТ", "cixi-ningbo": "АВТО", "ningbo-shanghai": "ПОЕЗД", departure: "САМОЛЁТ"
+    const plans = {
+      a: {
+        deyeDate: "27 ноября",
+        flightCount: "2",
+        status: "Вариант A требует прилёта в Шанхай уже 22 ноября и не совпадает с MU5066 при вылете из Казани 22 ноября.",
+        notice: "<strong>Вариант A:</strong> сначала EAST в Sanmenxia, затем юг и Deye. Сохранён для сравнения, но требует более раннего прибытия в Китай.",
+        stationDates: { sanmenxia: "23–24 NOV", guangzhou: "25 NOV", huizhou: "26 NOV", cixi: "27 NOV" },
+        days: [
+          { date: "22", month: "вс · ноя", title: "Прилёт в Шанхай", meta: "≈09:00 · PVG → Hongqiao → Sanmenxia", note: "Возможен только при прибытии 22 ноября; MU5066 с вылетом 22 ноября прилетает 23-го.", focus: "sanmenxia", legs: ["a-arrival", "a-shanghai-sanmenxia"] },
+          { date: "23", month: "пн · ноя", title: "EAST · производство BESS", meta: "09:00–17:00 · Sanmenxia", note: "Производство, PACK, PCS/EMS, испытания и техническая сессия.", focus: "sanmenxia", legs: [] },
+          { date: "24", month: "вт · ноя", title: "EAST и перелёт на юг", meta: "09:00–12:00 · Sanmenxia → Zhengzhou → Guangzhou", note: "Вторая техническая сессия, затем поезд и вечерний рейс.", focus: "guangzhou", legs: ["a-sanmenxia-zhengzhou", "a-zhengzhou-guangzhou"] },
+          { date: "25", month: "ср · ноя", title: "Voltgen · встреча в офисе", meta: "09:30–12:00 · Guangzhou", note: "После встречи — автомобиль в Huizhou.", focus: "huizhou", legs: ["a-guangzhou-huizhou"] },
+          { date: "26", month: "чт · ноя", title: "BSLBATT · завод", meta: "09:00–16:30 · Huizhou", note: "Вечером — трансфер в SZX и рейс в Ningbo.", focus: "cixi", legs: ["a-huizhou-shenzhen", "a-shenzhen-cixi"] },
+          { date: "27", month: "пт · ноя", title: "Deye · производство BESS", meta: "09:00–17:00 · Cixi / Ningbo", note: "Один полный день на площадке ESS.", focus: "cixi", legs: [] },
+          { date: "28", month: "сб · ноя", title: "Возвращение в Шанхай", meta: "Утро · Ningbo → Shanghai", note: "Скоростной поезд, резервный день и ночёвка рядом с Pudong.", focus: "shanghai", legs: ["a-cixi-ningbo", "a-ningbo-shanghai"] },
+          { date: "29", month: "вс · ноя", title: "Вылет в Казань", meta: "13:00 · MU5065 · PVG Terminal 1", note: "Плановое прибытие в Казань — 17:00 по местному времени.", focus: "kazan", legs: ["a-departure"] }
+        ]
+      },
+      b: {
+        deyeDate: "26 ноября",
+        flightCount: "3",
+        status: "Вариант B совместим с MU5066: вылет из Казани 22 ноября, прилёт в Shanghai 23 ноября в 09:00.",
+        notice: "<strong>Вариант B:</strong> после утреннего прилёта — дневной рейс в Guangzhou. Южные встречи проходят первыми, EAST завершает поездку.",
+        stationDates: { sanmenxia: "27–28 NOV", guangzhou: "23–24 NOV", huizhou: "24–25 NOV", cixi: "26 NOV" },
+        days: [
+          { date: "23", month: "пн · ноя", title: "Шанхай → Гуанчжоу", meta: "09:00 PVG · ориентир 13:30–16:15 PVG → CAN", note: "MU5066 вылетает из Казани 22 ноября в 20:00. На пересадку в Pudong заложено около 4,5 часа.", focus: "guangzhou", legs: ["b-arrival", "b-shanghai-guangzhou"] },
+          { date: "24", month: "вт · ноя", title: "Voltgen и переезд в Huizhou", meta: "09:30–12:00 · Guangzhou → Huizhou", note: "Встреча в офисе Voltgen; после обеда — переезд и вводная сессия BSLBATT.", focus: "huizhou", legs: ["b-guangzhou-huizhou"] },
+          { date: "25", month: "ср · ноя", title: "BSLBATT и перелёт в Ningbo", meta: "09:00–15:00 · Huizhou → SZX → NGB", note: "Заводская проверка, затем трансфер в Shenzhen и вечерний прямой рейс.", focus: "cixi", legs: ["b-huizhou-shenzhen", "b-shenzhen-cixi"] },
+          { date: "26", month: "чт · ноя", title: "Deye · производство BESS", meta: "09:00–17:00 · Cixi / Ningbo", note: "Полный день на площадке ESS — один из подтверждённых компанией доступных дней.", focus: "cixi", legs: [] },
+          { date: "27", month: "пт · ноя", title: "Ningbo → EAST", meta: "08:30–10:50 NGB → CGO · после обеда Sanmenxia", note: "Ориентир: утренний прямой рейс в Zhengzhou, трансфер и первая сессия EAST во второй половине дня.", focus: "sanmenxia", legs: ["b-cixi-ningbo", "b-ningbo-zhengzhou", "b-zhengzhou-sanmenxia"] },
+          { date: "28", month: "сб · ноя", title: "EAST и возвращение в Шанхай", meta: "09:00–13:30 · ориентир поезд 16:18–23:07", note: "Утренняя техническая сессия; работу завода в субботу и конкретный поезд нужно подтвердить.", focus: "shanghai", legs: ["b-sanmenxia-shanghai"] },
+          { date: "29", month: "вс · ноя", title: "Вылет в Казань", meta: "13:00 · MU5065 · PVG Terminal 1", note: "Плановое прибытие в Казань — 17:00 по местному времени.", focus: "kazan", legs: ["b-departure"] }
+        ]
+      }
     };
 
-    const routePaths = [...document.querySelectorAll(".scheme-leg")];
+    const modeByLeg = {
+      arrival: "САМОЛЁТ", "shanghai-sanmenxia": "ПОЕЗД", "sanmenxia-zhengzhou": "ПОЕЗД",
+      "zhengzhou-guangzhou": "САМОЛЁТ", "shanghai-guangzhou": "САМОЛЁТ", "guangzhou-huizhou": "АВТО",
+      "huizhou-shenzhen": "АВТО", "shenzhen-cixi": "САМОЛЁТ", "cixi-ningbo": "АВТО",
+      "ningbo-zhengzhou": "САМОЛЁТ", "zhengzhou-sanmenxia": "ПОЕЗД", "sanmenxia-shanghai": "ПОЕЗД",
+      "ningbo-shanghai": "ПОЕЗД", departure: "САМОЛЁТ"
+    };
+
+    const allRoutePaths = [...document.querySelectorAll(".scheme-leg")];
     const stations = [...document.querySelectorAll(".station")];
     const vehicle = document.getElementById("vehicle");
     const vehicleLabel = document.getElementById("vehicle-label");
+    const dayList = document.getElementById("day-list");
+    let currentOption = "b";
+    let currentPlan = plans[currentOption];
     let cancelled = false;
+
+    const visiblePaths = () => [...document.querySelectorAll(`.route-option[data-route="${currentOption}"] .scheme-leg`)];
+
+    function renderDays() {
+      dayList.innerHTML = currentPlan.days.map((day, index) => `
+        <button class="day-card" type="button" data-day="${index}" aria-pressed="false">
+          <span class="date-box"><span class="date-number">${day.date}</span><span class="date-month">${day.month}</span></span>
+          <span><span class="day-title">${day.title}</span><span class="day-meta">${day.meta}</span><span class="day-note">${day.note}</span></span>
+        </button>`).join("");
+    }
+
+    function showAllRoute() {
+      document.querySelectorAll(".day-card").forEach(card => card.setAttribute("aria-pressed", "false"));
+      allRoutePaths.forEach(path => { path.classList.remove("is-active", "show-all"); });
+      visiblePaths().forEach(path => path.classList.add("show-all"));
+      stations.forEach(station => station.classList.remove("is-active"));
+    }
+
+    function selectOption(option) {
+      cancelled = true;
+      vehicle.classList.remove("is-visible");
+      currentOption = option;
+      currentPlan = plans[option];
+      document.querySelectorAll(".route-option").forEach(group => { group.hidden = group.dataset.route !== option; });
+      document.querySelectorAll(".option-tab").forEach(tab => tab.setAttribute("aria-selected", tab.dataset.option === option ? "true" : "false"));
+      document.getElementById("deye-date").textContent = currentPlan.deyeDate;
+      document.getElementById("flight-count").textContent = currentPlan.flightCount;
+      document.getElementById("option-status").textContent = currentPlan.status;
+      document.getElementById("route-notice").innerHTML = currentPlan.notice;
+      Object.entries(currentPlan.stationDates).forEach(([key, value]) => {
+        document.getElementById(`station-date-${key}`).textContent = value;
+      });
+      renderDays();
+      showAllRoute();
+    }
 
     function setActiveDay(index) {
       document.querySelectorAll(".day-card").forEach((card, cardIndex) => {
         card.setAttribute("aria-pressed", cardIndex === index ? "true" : "false");
       });
-      routePaths.forEach(path => path.classList.toggle("is-active", Number(path.dataset.day) === index));
-      stations.forEach(station => station.classList.toggle("is-active", station.dataset.station === days[index].focus));
+      const activeLegs = currentPlan.days[index].legs;
+      allRoutePaths.forEach(path => {
+        path.classList.remove("show-all");
+        path.classList.toggle("is-active", activeLegs.includes(path.id));
+      });
+      stations.forEach(station => station.classList.toggle("is-active", station.dataset.station === currentPlan.days[index].focus));
     }
 
     function animateLeg(id, duration = 1050) {
       return new Promise(resolve => {
         const path = document.getElementById(id);
         const length = path.getTotalLength();
-        vehicleLabel.textContent = modes[id];
+        const genericId = id.replace(/^[ab]-/, "");
+        vehicleLabel.textContent = modeByLeg[genericId];
         vehicle.classList.add("is-visible");
         const start = performance.now();
         function frame(now) {
@@ -602,10 +680,10 @@
       playButton.disabled = true;
       playButton.textContent = "Маршрут воспроизводится";
 
-      for (let i = 0; i < days.length; i++) {
+      for (let i = 0; i < currentPlan.days.length; i++) {
         if (cancelled) break;
         setActiveDay(i);
-        const dayLegs = days[i].legs;
+        const dayLegs = currentPlan.days[i].legs;
         if (dayLegs.length) {
           for (const id of dayLegs) await animateLeg(id);
         } else {
@@ -617,24 +695,24 @@
       playButton.textContent = "Показать маршрут";
     }
 
-    document.querySelectorAll(".day-card").forEach(card => {
-      card.addEventListener("click", () => {
+    dayList.addEventListener("click", event => {
+      const card = event.target.closest(".day-card");
+      if (card) {
         cancelled = true;
         vehicle.classList.remove("is-visible");
         setActiveDay(Number(card.dataset.day));
-      });
+      }
     });
 
+    document.querySelectorAll(".option-tab").forEach(tab => tab.addEventListener("click", () => selectOption(tab.dataset.option)));
     document.getElementById("play-route").addEventListener("click", playRoute);
     document.getElementById("show-all").addEventListener("click", () => {
       cancelled = true;
       vehicle.classList.remove("is-visible");
-      document.querySelectorAll(".day-card").forEach(card => card.setAttribute("aria-pressed", "false"));
-      routePaths.forEach(path => { path.classList.remove("is-active"); path.classList.add("show-all"); });
-      stations.forEach(station => station.classList.remove("is-active"));
+      showAllRoute();
     });
 
-    routePaths.forEach(path => path.classList.add("show-all"));
+    selectOption("b");
     window.scrollTo(0, 0);
   </script>
 </body>
