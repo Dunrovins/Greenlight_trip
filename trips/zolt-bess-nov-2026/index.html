@@ -449,19 +449,19 @@
     </header>
 
     <section class="summary-grid" aria-label="Краткое описание поездки">
-      <div class="summary-item"><strong>SZX</strong><span>прямой прилёт из Москвы на юг</span></div>
-      <div class="summary-item"><strong>4 + 1</strong><span>4 встречи и Voltgen под вопросом</span></div>
+      <div class="summary-item"><strong>CAN</strong><span>прямой прилёт из Москвы на юг</span></div>
+      <div class="summary-item"><strong>4</strong><span>4 подтверждаемые встречи с производителями</span></div>
       <div class="summary-item"><strong>4</strong><span>перелёта по всему маршруту</span></div>
       <div class="summary-item"><strong>29 ноября</strong><span>вылет из Шанхая в воскресенье</span></div>
     </section>
 
     <section class="option-bar" aria-label="Основной маршрут">
-      <div class="option-copy"><strong>Основной маршрут · сначала юг</strong><span>Казань → Москва → Shenzhen → Dongguan → Huizhou → Guangzhou? → Cixi → Shanghai → Казань</span></div>
-      <div class="status-tentative">Voltgen под вопросом</div>
+      <div class="option-copy"><strong>Основной маршрут · прилёт в Guangzhou</strong><span>Казань → Москва → Guangzhou → Dongguan → Huizhou → Shenzhen → Cixi → Shanghai → Казань</span></div>
+      <div class="status-tentative">4 производителя</div>
     </section>
 
     <section class="notice" aria-label="Актуальные изменения">
-      <div id="route-notice"><strong>Новый вариант:</strong> 21 ноября — перелёт в Москву и прямой рейс SVO → Shenzhen. Южный кластер проходит первым; Deye и Shanghai завершают поездку.</div>
+      <div id="route-notice"><strong>Обновлённый вариант:</strong> 21 ноября — перелёт в Москву и прямой рейс SVO → Guangzhou. В Guangzhou остаётся только аэропорт; маршрут идёт без возвратов через Dongguan, Huizhou и Shenzhen, затем в Ningbo и Shanghai.</div>
       <div class="controls">
         <button class="button primary" id="play-route" type="button">Показать маршрут</button>
         <button class="button" id="show-all" type="button">Весь маршрут</button>
@@ -480,11 +480,11 @@
 
             <g class="route-option" data-route="main">
               <path id="kazan-moscow" class="scheme-leg air" d="M105 115 C170 70 235 70 300 115"></path>
-              <path id="moscow-shenzhen" class="scheme-leg air" d="M300 115 C205 290 210 500 320 620"></path>
-              <path id="shenzhen-dongguan" class="scheme-leg road" d="M320 620 L460 555"></path>
+              <path id="moscow-guangzhou" class="scheme-leg air" d="M300 115 C205 260 180 350 220 420"></path>
+              <path id="guangzhou-dongguan" class="scheme-leg road" d="M220 420 L460 555"></path>
               <path id="dongguan-huizhou" class="scheme-leg road" d="M460 555 L590 470"></path>
-              <path id="huizhou-guangzhou" class="scheme-leg road" d="M590 470 L220 420"></path>
-              <path id="south-cixi" class="scheme-leg air" d="M220 420 C430 330 650 315 840 350"></path>
+              <path id="huizhou-shenzhen" class="scheme-leg road" d="M590 470 L320 620"></path>
+              <path id="shenzhen-cixi" class="scheme-leg air" d="M320 620 C520 500 650 390 840 350"></path>
               <path id="cixi-shanghai" class="scheme-leg rail" d="M840 350 C868 274 850 200 805 145"></path>
               <path id="shanghai-kazan" class="scheme-leg air" d="M805 145 C590 36 300 36 105 115"></path>
             </g>
@@ -497,11 +497,11 @@
             <g class="station" data-station="kazan" transform="translate(105 115)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">KZN</text><text class="name" x="-34" y="58">КАЗАНЬ</text><text class="date" x="-34" y="73">21 / 29 NOV</text></g>
             <g class="station" data-station="moscow" transform="translate(300 115)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">SVO</text><text class="name" x="-34" y="58">МОСКВА</text><text class="date" x="-34" y="73">21 NOV</text></g>
             <g class="station" data-station="shanghai" transform="translate(805 145)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">PVG</text><text class="name" x="-34" y="58">ШАНХАЙ</text><text class="date" x="-34" y="73">28 / 29 NOV</text></g>
-            <g class="station tentative" data-station="guangzhou" transform="translate(220 420)"><circle r="34"></circle><text class="code" text-anchor="middle" y="7">VOLT?</text><text class="name" x="-34" y="58">GUANGZHOU</text><text class="date" x="-34" y="73">26 NOV</text></g>
-            <g class="station" data-station="dongguan" transform="translate(460 555)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">EAST</text><text class="name" x="-34" y="58">DONGGUAN</text><text class="date" x="-34" y="73">24 NOV</text></g>
+            <g class="station" data-station="guangzhou" transform="translate(220 420)"><circle r="34"></circle><text class="code" text-anchor="middle" y="7">CAN</text><text class="name" x="-34" y="58">GUANGZHOU</text><text class="date" x="-34" y="73">22 NOV</text></g>
+            <g class="station" data-station="dongguan" transform="translate(460 555)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">EAST</text><text class="name" x="-34" y="58">DONGGUAN</text><text class="date" x="-34" y="73">22–24 NOV</text></g>
             <g class="station" data-station="huizhou" transform="translate(590 470)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">BSL</text><text class="name" x="-34" y="58">HUIZHOU</text><text class="date" x="-34" y="73">25 NOV</text></g>
-            <g class="station" data-station="shenzhen" transform="translate(320 620)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">KSTAR</text><text class="name" x="-34" y="58">SHENZHEN</text><text class="date" x="-34" y="73">22–23 NOV</text></g>
-            <g class="station" data-station="cixi" transform="translate(840 350)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">DEYE</text><text class="name" x="-34" y="58">CIXI / NINGBO</text><text class="date" x="-34" y="73">27 NOV</text></g>
+            <g class="station" data-station="shenzhen" transform="translate(320 620)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">KSTAR</text><text class="name" x="-34" y="58">SHENZHEN</text><text class="date" x="-34" y="73">25–26 NOV</text></g>
+            <g class="station" data-station="cixi" transform="translate(840 350)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">DEYE</text><text class="name" x="-34" y="58">CIXI / NINGBO</text><text class="date" x="-34" y="73">27–28 NOV</text></g>
 
             <g class="vehicle" id="vehicle"><rect x="-38" y="-15" width="76" height="30"></rect><text id="vehicle-label" y="4">FLIGHT</text></g>
           </svg>
@@ -527,7 +527,6 @@
         <h2>Адреса посещений</h2>
         <p><strong>EAST PES:</strong> офис в Dongguan. Поездка на производство в Sanmenxia исключена; точный адрес офиса нужно подтвердить у контакта EAST.</p>
         <p><strong>KSTAR:</strong> 4/F, Building 1, Software Park, Keji C. Road 2nd, Nanshan District, Shenzhen. Chris · +86 755 2138 9008, ext. 8508 · sales@kstar.com.</p>
-        <p><strong>Voltgen:</strong><span class="status-tentative">под вопросом</span> 广州市白云区三元里大道中合益街16–30号天球商务大厦9楼. Встреча остаётся опциональной.</p>
         <p><strong>BSLBATT:</strong> 广东省惠州市仲恺高新区潼湖生态智慧区群益智能制造产业园D区2号楼2–3单元1楼、8楼.</p>
         <p><strong>Deye ESS:</strong> No. 568 South Rixian Road, Binhai Economic Development Zone, Cixi, Ningbo, Zhejiang.</p>
       </div>
@@ -535,18 +534,18 @@
         <h2>Проверки перед бронированием</h2>
         <ul class="source-list">
           <li><strong>21 ноября:</strong> проверить SU1277 KZN 10:50 → SVO 12:35 и оформить достаточный запас до международного вылета.</li>
-          <li><strong>CZ8372:</strong> подтвердить SVO 21:00 → SZX 12:10 следующего дня; при отдельных билетах багаж нужно получить и зарегистрировать заново.</li>
-          <li>Подтвердить KSTAR с Chris на 23 ноября и получить точный адрес офиса EAST PES в Dongguan на 24 ноября.</li>
+          <li><strong>SU220:</strong> подтвердить SVO 19:50 → CAN ≈10:00 следующего дня; при отдельных билетах багаж нужно получить и зарегистрировать заново.</li>
+          <li>Получить точный адрес офиса EAST PES в Dongguan и подтвердить встречу на 23 ноября с продолжением утром 24 ноября.</li>
           <li>Подтвердить BSLBATT на 25 ноября и Deye на 27 ноября.</li>
-          <li>Решить, оставляем ли Voltgen 26 ноября. Без него можно лететь в Ningbo из Shenzhen, не заезжая в Guangzhou.</li>
-          <li>После подтверждения Voltgen выбрать вечерний рейс CAN → NGB либо SZX → NGB на 26 ноября.</li>
+          <li>Подтвердить KSTAR с Chris на 26 ноября и завершить встречу вовремя для выезда в аэропорт Shenzhen.</li>
+          <li><strong>26 ноября:</strong> выбрать вечерний прямой рейс SZX → NGB; рабочий ориентир — CZ8737 20:00 → 22:10.</li>
           <li><strong>29 ноября:</strong> MU5065 PVG 13:00 → KZN 17:00; ночёвка 28 ноября — рядом с Pudong.</li>
         </ul>
       </div>
     </section>
 
     <footer>
-      <p>Время с символом ≈ является плановым. Номера внутренних рейсов и поездов фиксируются после подтверждения встреч и открытия продажи билетов. Версия маршрута: 9 ноября 2026 года.</p>
+      <p>Время с символом ≈ является плановым. Номера внутренних рейсов и поездов фиксируются после подтверждения встреч и покупки билетов. Версия маршрута: 10 ноября 2026 года.</p>
       <p>Схема маршрута не является географической картой.</p>
     </footer>
   </main>
@@ -554,21 +553,21 @@
   <script>
     const plan = {
       days: [
-        { date: "21", month: "сб · ноя", title: "Казань → Москва → Shenzhen", meta: "10:50 KZN → 12:35 SVO · 21:00 SVO → SZX", note: "Утренний перелёт в Sheremetyevo с большим запасом; вечером прямой CZ8372 в Shenzhen.", focus: "moscow", legs: ["kazan-moscow", "moscow-shenzhen"] },
-        { date: "22", month: "вс · ноя", title: "Прилёт в Shenzhen", meta: "≈12:10 · SZX", note: "Прибытие, прохождение границы, заселение и отдых перед началом деловой программы.", focus: "shenzhen", legs: [] },
-        { date: "23", month: "пн · ноя", title: "KSTAR · Shenzhen", meta: "Nanshan District", note: "Полный день на встречу, продуктовую презентацию и техническое обсуждение BESS.", focus: "shenzhen", legs: [] },
-        { date: "24", month: "вт · ноя", title: "EAST PES · Dongguan", meta: "Shenzhen → Dongguan", note: "Офисная встреча вместо поездки на завод в Sanmenxia; вечером переезд в сторону Huizhou.", focus: "dongguan", legs: ["shenzhen-dongguan"] },
-        { date: "25", month: "ср · ноя", title: "BSLBATT · Huizhou", meta: "09:00–16:30 · завод", note: "Полный день на производственной площадке и проверка решений для накопления энергии.", focus: "huizhou", legs: ["dongguan-huizhou"] },
-        { date: "26", month: "чт · ноя", title: "Voltgen? и перелёт в Ningbo", meta: "Huizhou → Guangzhou? → CAN/SZX → NGB", note: "Если Voltgen подтверждается — встреча в Guangzhou. Если нет — прямой выезд в SZX и перелёт в Ningbo без крюка.", focus: "cixi", legs: ["huizhou-guangzhou", "south-cixi"] },
-        { date: "27", month: "пт · ноя", title: "Deye · производство BESS", meta: "09:00–17:00 · Cixi / Ningbo", note: "Полный день на площадке ESS — один из ранее предложенных Deye доступных дней.", focus: "cixi", legs: [] },
-        { date: "28", month: "сб · ноя", title: "Ningbo → Shanghai", meta: "Скоростной поезд · резервный день", note: "Возвращение в Shanghai, запас после деловой программы и ночёвка рядом с Pudong.", focus: "shanghai", legs: ["cixi-shanghai"] },
+        { date: "21", month: "сб · ноя", title: "Казань → Москва → Guangzhou", meta: "10:50 KZN → 12:35 SVO · 19:50 SVO → CAN", note: "Утренний перелёт в Sheremetyevo с большим запасом; вечером прямой SU220 в Guangzhou.", focus: "moscow", legs: ["kazan-moscow", "moscow-guangzhou"] },
+        { date: "22", month: "вс · ноя", title: "Прилёт в Guangzhou → Dongguan", meta: "≈10:00 · CAN → Dongguan", note: "Прибытие, прохождение границы и переезд в Dongguan; заселение и отдых перед деловой программой.", focus: "dongguan", legs: ["guangzhou-dongguan"] },
+        { date: "23", month: "пн · ноя", title: "EAST PES · Dongguan", meta: "09:00–17:00 · офис и продукты", note: "Первый полный день с EAST PES: UPS, EV chargers, inverters и решения BESS. Sanmenxia исключён.", focus: "dongguan", legs: [] },
+        { date: "24", month: "вт · ноя", title: "EAST PES → Huizhou", meta: "09:00–12:00 · затем переезд", note: "Утренняя техническая сессия EAST PES завершает 1,5 дня; после обеда переезд в Huizhou.", focus: "huizhou", legs: ["dongguan-huizhou"] },
+        { date: "25", month: "ср · ноя", title: "BSLBATT · Huizhou", meta: "09:00–16:30 · завод", note: "Полный день на производственной площадке; вечером переезд и ночёвка в Shenzhen.", focus: "shenzhen", legs: ["huizhou-shenzhen"] },
+        { date: "26", month: "чт · ноя", title: "KSTAR · Shenzhen → Ningbo", meta: "09:00–16:00 · SZX 20:00 → NGB 22:10", note: "Полный рабочий день у KSTAR; затем выезд в аэропорт и прямой вечерний перелёт в Ningbo.", focus: "cixi", legs: ["shenzhen-cixi"] },
+        { date: "27", month: "пт · ноя", title: "Deye · производство BESS", meta: "09:00–17:00 · Cixi / Ningbo", note: "Полный день на площадке ESS — основной производственный визит северного кластера.", focus: "cixi", legs: [] },
+        { date: "28", month: "сб · ноя", title: "Deye → Shanghai", meta: "09:00–12:00 · затем скоростной поезд", note: "Утренняя техническая сессия завершает 1,5 дня Deye; после обеда поезд в Shanghai и ночёвка рядом с Pudong.", focus: "shanghai", legs: ["cixi-shanghai"] },
         { date: "29", month: "вс · ноя", title: "Шанхай → Казань", meta: "13:00 · MU5065 · PVG Terminal 1", note: "Прямой рейс в Казань; плановое прибытие — 17:00 по местному времени.", focus: "kazan", legs: ["shanghai-kazan"] }
       ]
     };
 
     const modeByLeg = {
-      "kazan-moscow": "САМОЛЁТ", "moscow-shenzhen": "САМОЛЁТ", "shenzhen-dongguan": "АВТО",
-      "dongguan-huizhou": "АВТО", "huizhou-guangzhou": "АВТО", "south-cixi": "САМОЛЁТ",
+      "kazan-moscow": "САМОЛЁТ", "moscow-guangzhou": "САМОЛЁТ", "guangzhou-dongguan": "АВТО",
+      "dongguan-huizhou": "АВТО", "huizhou-shenzhen": "АВТО", "shenzhen-cixi": "САМОЛЁТ",
       "cixi-shanghai": "ПОЕЗД", "shanghai-kazan": "САМОЛЁТ"
     };
 
