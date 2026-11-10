@@ -451,12 +451,12 @@
     <section class="summary-grid" aria-label="Краткое описание поездки">
       <div class="summary-item"><strong>CAN</strong><span>прямой прилёт из Москвы на юг</span></div>
       <div class="summary-item"><strong>4</strong><span>4 подтверждаемые встречи с производителями</span></div>
-      <div class="summary-item"><strong>4</strong><span>перелёта по всему маршруту</span></div>
-      <div class="summary-item"><strong>29 ноября</strong><span>вылет из Шанхая в воскресенье</span></div>
+      <div class="summary-item"><strong>5</strong><span>перелётов по всему маршруту</span></div>
+      <div class="summary-item"><strong>29 ноября</strong><span>Shanghai → Moscow → Kazan</span></div>
     </section>
 
     <section class="option-bar" aria-label="Основной маршрут">
-      <div class="option-copy"><strong>Основной маршрут · прилёт в Guangzhou</strong><span>Казань → Москва → Guangzhou → Dongguan → Huizhou → Shenzhen → Cixi → Shanghai → Казань</span></div>
+      <div class="option-copy"><strong>Основной маршрут · прилёт в Guangzhou</strong><span>Казань → Москва → Guangzhou → Dongguan → Huizhou → Shenzhen → Cixi → Shanghai → Москва → Казань</span></div>
       <div class="status-tentative">4 производителя</div>
     </section>
 
@@ -486,7 +486,8 @@
               <path id="huizhou-shenzhen" class="scheme-leg road" d="M590 470 L320 620"></path>
               <path id="shenzhen-cixi" class="scheme-leg air" d="M320 620 C520 500 650 390 840 350"></path>
               <path id="cixi-shanghai" class="scheme-leg rail" d="M840 350 C868 274 850 200 805 145"></path>
-              <path id="shanghai-kazan" class="scheme-leg air" d="M805 145 C590 36 300 36 105 115"></path>
+              <path id="shanghai-moscow" class="scheme-leg air" d="M805 145 C630 42 450 40 300 115"></path>
+              <path id="moscow-kazan" class="scheme-leg air" d="M300 115 C235 70 170 70 105 115"></path>
             </g>
 
             <text class="direction-label" x="286" y="54">В КИТАЙ · ИЗ МОСКВЫ НА ЮГО-ВОСТОК</text>
@@ -495,7 +496,7 @@
             <path d="M458 107 L286 107" stroke="#e4002b" stroke-width="2" marker-end="url(#arrow-red)"></path>
 
             <g class="station" data-station="kazan" transform="translate(105 115)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">KZN</text><text class="name" x="-34" y="58">КАЗАНЬ</text><text class="date" x="-34" y="73">21 / 29 NOV</text></g>
-            <g class="station" data-station="moscow" transform="translate(300 115)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">SVO</text><text class="name" x="-34" y="58">МОСКВА</text><text class="date" x="-34" y="73">21 NOV</text></g>
+            <g class="station" data-station="moscow" transform="translate(300 115)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">SVO</text><text class="name" x="-34" y="58">МОСКВА</text><text class="date" x="-34" y="73">21 / 29 NOV</text></g>
             <g class="station" data-station="shanghai" transform="translate(805 145)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">PVG</text><text class="name" x="-34" y="58">ШАНХАЙ</text><text class="date" x="-34" y="73">28 / 29 NOV</text></g>
             <g class="station" data-station="guangzhou" transform="translate(220 420)"><circle r="34"></circle><text class="code" text-anchor="middle" y="7">CAN</text><text class="name" x="-34" y="58">GUANGZHOU</text><text class="date" x="-34" y="73">22 NOV</text></g>
             <g class="station" data-station="dongguan" transform="translate(460 555)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">EAST</text><text class="name" x="-34" y="58">DONGGUAN</text><text class="date" x="-34" y="73">22–24 NOV</text></g>
@@ -539,7 +540,7 @@
           <li>Подтвердить BSLBATT на 25 ноября и Deye на 27 ноября.</li>
           <li>Подтвердить KSTAR с Chris на 26 ноября и завершить встречу вовремя для выезда в аэропорт Shenzhen.</li>
           <li><strong>26 ноября:</strong> выбрать вечерний прямой рейс SZX → NGB; рабочий ориентир — CZ8737 20:00 → 22:10.</li>
-          <li><strong>29 ноября:</strong> MU5065 PVG 13:00 → KZN 17:00; ночёвка 28 ноября — рядом с Pudong.</li>
+          <li><strong>29 ноября:</strong> рабочая связка MU591 PVG 11:50 → SVO 17:05 и SU1278 SVO 21:55 → KZN 23:40. При отдельных билетах багаж нужно получить и зарегистрировать заново.</li>
         </ul>
       </div>
     </section>
@@ -561,14 +562,14 @@
         { date: "26", month: "чт · ноя", title: "KSTAR · Shenzhen → Ningbo", meta: "09:00–16:00 · SZX 20:00 → NGB 22:10", note: "Полный рабочий день у KSTAR; затем выезд в аэропорт и прямой вечерний перелёт в Ningbo.", focus: "cixi", legs: ["shenzhen-cixi"] },
         { date: "27", month: "пт · ноя", title: "Deye · производство BESS", meta: "09:00–17:00 · Cixi / Ningbo", note: "Полный день на площадке ESS — основной производственный визит северного кластера.", focus: "cixi", legs: [] },
         { date: "28", month: "сб · ноя", title: "Deye → Shanghai", meta: "09:00–12:00 · затем скоростной поезд", note: "Утренняя техническая сессия завершает 1,5 дня Deye; после обеда поезд в Shanghai и ночёвка рядом с Pudong.", focus: "shanghai", legs: ["cixi-shanghai"] },
-        { date: "29", month: "вс · ноя", title: "Шанхай → Казань", meta: "13:00 · MU5065 · PVG Terminal 1", note: "Прямой рейс в Казань; плановое прибытие — 17:00 по местному времени.", focus: "kazan", legs: ["shanghai-kazan"] }
+        { date: "29", month: "вс · ноя", title: "Shanghai → Moscow → Kazan", meta: "MU591 11:50–17:05 · SU1278 21:55–23:40", note: "Перелёт через Sheremetyevo. Между рейсами около 4 ч 50 мин; при отдельных билетах потребуется повторная регистрация багажа.", focus: "kazan", legs: ["shanghai-moscow", "moscow-kazan"] }
       ]
     };
 
     const modeByLeg = {
       "kazan-moscow": "САМОЛЁТ", "moscow-guangzhou": "САМОЛЁТ", "guangzhou-dongguan": "АВТО",
       "dongguan-huizhou": "АВТО", "huizhou-shenzhen": "АВТО", "shenzhen-cixi": "САМОЛЁТ",
-      "cixi-shanghai": "ПОЕЗД", "shanghai-kazan": "САМОЛЁТ"
+      "cixi-shanghai": "ПОЕЗД", "shanghai-moscow": "САМОЛЁТ", "moscow-kazan": "САМОЛЁТ"
     };
 
     const allRoutePaths = [...document.querySelectorAll(".scheme-leg")];
