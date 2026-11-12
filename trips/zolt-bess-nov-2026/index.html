@@ -56,6 +56,8 @@
       align-items: end;
     }
 
+    .masthead > div { min-width: 0; }
+
     .eyebrow {
       margin: 0 0 10px;
       font-size: 13px;
@@ -112,6 +114,7 @@
     .summary-item:last-child { border-right: 0; }
     .summary-item strong { display: block; font-size: 23px; letter-spacing: -.03em; }
     .summary-item span { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+    .summary-item strong, .summary-item span, .option-copy { overflow-wrap: anywhere; }
 
     .notice {
       display: flex;
@@ -139,6 +142,41 @@
     .option-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
     .option-tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--paper); }
     .route-option[hidden] { display: none; }
+
+    .route-table-wrap {
+      padding: 24px 0 28px;
+      border-bottom: 1px solid var(--ink);
+    }
+
+    .route-table-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 14px;
+    }
+
+    .route-table-heading > * { min-width: 0; }
+
+    .route-table-heading h2 { margin: 0; font-size: 28px; line-height: 1; letter-spacing: -.035em; }
+    .route-table-heading p { margin: 0; color: var(--muted); font-size: 13px; text-align: right; }
+    .route-table { border-top: 1px solid var(--ink); }
+    .route-row {
+      display: grid;
+      grid-template-columns: 90px minmax(260px, 1.5fr) minmax(190px, 1fr) 100px 160px minmax(220px, 1.15fr);
+      min-width: 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .route-row > span { min-width: 0; padding: 11px 12px; border-right: 1px solid var(--line); font-size: 13px; }
+    .route-row > span:first-child { padding-left: 0; font-weight: 700; }
+    .route-row > span:last-child { border-right: 0; }
+    .route-row.header { background: var(--ink); color: var(--paper); }
+    .route-row.header > span { padding-top: 9px; padding-bottom: 9px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+    .route-row.header > span:first-child { padding-left: 12px; }
+    .route-row .route-name { font-weight: 700; }
+    .route-row .mode { color: var(--accent); font-weight: 800; text-transform: uppercase; }
+    .route-row .duration { font-weight: 700; }
+    .route-row:nth-child(odd):not(.header) { background: var(--field); }
 
     .controls {
       display: flex;
@@ -398,7 +436,7 @@
     @media (max-width: 680px) {
       .shell { padding: 0 16px 28px; }
       .masthead { padding-top: 18px; }
-      h1 { font-size: 34px; line-height: .98; overflow-wrap: anywhere; }
+      h1 { max-width: 100%; font-size: 32px; line-height: .98; overflow-wrap: anywhere; word-break: break-word; }
       .date-lockup strong { font-size: 62px; }
       .notice { align-items: flex-start; flex-direction: column; }
       .option-bar { align-items: flex-start; flex-direction: column; }
@@ -415,6 +453,21 @@
       .details { grid-template-columns: 1fr; }
       .detail-block:first-child { padding-right: 0; border-right: 0; border-bottom: 1px solid var(--line); }
       .detail-block:last-child { padding-left: 0; }
+      .route-table-heading { align-items: flex-start; flex-direction: column; gap: 6px; }
+      .route-table-heading, .route-table-heading h2 { width: 100%; max-width: 100%; overflow-wrap: anywhere; }
+      .route-table-heading p { text-align: left; }
+      .route-table { overflow: visible; }
+      .route-row.header { display: none; }
+      .route-row {
+        min-width: 0;
+        grid-template-columns: 82px minmax(0, 1fr);
+        padding: 11px 0;
+      }
+      .route-row > span { grid-column: 2; padding: 2px 8px; border-right: 0; font-size: 13px; overflow-wrap: anywhere; }
+      .route-row > span:first-child { grid-column: 1; grid-row: 1 / span 5; padding: 2px 8px 2px 0; font-size: 14px; }
+      .route-row > span:nth-child(3)::before { content: "Цель · "; color: var(--muted); font-weight: 400; }
+      .route-row > span:nth-child(5)::before { content: "В пути · "; color: var(--muted); font-weight: 400; }
+      .route-row > span:nth-child(6)::before { content: "Детали · "; color: var(--muted); font-weight: 400; }
       footer { flex-direction: column; }
     }
 
@@ -466,6 +519,30 @@
         <button class="button primary" id="play-route" type="button">Показать маршрут</button>
         <button class="button" id="show-all" type="button">Весь маршрут</button>
         <button class="button" type="button" onclick="window.print()">Печать</button>
+      </div>
+    </section>
+
+    <section class="route-table-wrap" aria-labelledby="route-table-title">
+      <div class="route-table-heading">
+        <h2 id="route-table-title">Финальный укрупнённый маршрут</h2>
+        <p>Каждый транспортный участок — отдельной строкой.<br>Автомобильное время зависит от трафика.</p>
+      </div>
+      <div class="route-table" role="table" aria-label="Транспортные участки маршрута">
+        <div class="route-row header" role="row"><span>Дата</span><span>Маршрут</span><span>Цель</span><span>Транспорт</span><span>В пути</span><span>Рейс / примечание</span></div>
+        <div class="route-row" role="row"><span>21.11</span><span class="route-name">Kazan KZN → Moscow SVO</span><span>Пересадка</span><span class="mode">Авиа</span><span class="duration">1 ч 45 мин</span><span>SU1277 · 10:50–12:35</span></div>
+        <div class="route-row" role="row"><span>21–22.11</span><span class="route-name">Moscow SVO → Shenzhen SZX</span><span>Перелёт в Китай</span><span class="mode">Авиа</span><span class="duration">10 ч 10 мин</span><span>CZ8372 · 21:00–12:10 +1</span></div>
+        <div class="route-row" role="row"><span>22.11</span><span class="route-name">Shenzhen SZX → Nanshan</span><span>Отель и отдых</span><span class="mode">Авто</span><span class="duration">30–60 мин</span><span>Граница и дорожный трафик</span></div>
+        <div class="route-row" role="row"><span>23.11</span><span class="route-name">Shenzhen / KSTAR → Huizhou</span><span>После встречи KSTAR</span><span class="mode">Авто</span><span class="duration">1 ч 30 мин – 2 ч</span><span>Ночёвка в Huizhou</span></div>
+        <div class="route-row" role="row"><span>24.11</span><span class="route-name">Huizhou / BSLBATT → Dongguan</span><span>После BSLBATT</span><span class="mode">Авто</span><span class="duration">1–1 ч 30 мин</span><span>Ночёвка в Dongguan</span></div>
+        <div class="route-row" role="row"><span>25.11</span><span class="route-name">Dongguan / EAST PES → Shenzhen SZX</span><span>После встречи EAST PES</span><span class="mode">Авто</span><span class="duration">1 ч 30 мин – 2 ч</span><span>Запас на трафик и регистрацию</span></div>
+        <div class="route-row" role="row"><span>25.11</span><span class="route-name">Shenzhen SZX → Zhengzhou CGO</span><span>К программе EAST PES</span><span class="mode">Авиа</span><span class="duration">2 ч 20 мин</span><span>ZH9305 · 18:40–21:00</span></div>
+        <div class="route-row" role="row"><span>25.11</span><span class="route-name">Zhengzhou CGO → отель</span><span>Заселение</span><span class="mode">Авто</span><span class="duration">45–60 мин</span><span>Зависит от трафика</span></div>
+        <div class="route-row" role="row"><span>26.11</span><span class="route-name">Zhengzhou East → Sanmenxia South</span><span>EAST PES · день 1</span><span class="mode">Ж/Д</span><span class="duration">1–1 ч 30 мин</span><span>Скоростной поезд</span></div>
+        <div class="route-row" role="row"><span>27.11</span><span class="route-name">Sanmenxia South → Zhengzhou East</span><span>После EAST PES</span><span class="mode">Ж/Д</span><span class="duration">1–1 ч 30 мин</span><span>Ночёвка в Zhengzhou</span></div>
+        <div class="route-row" role="row"><span>28.11</span><span class="route-name">Zhengzhou East → Shanghai Hongqiao</span><span>Переезд перед вылетом</span><span class="mode">Ж/Д</span><span class="duration">около 5 ч</span><span>Прямой скоростной поезд</span></div>
+        <div class="route-row" role="row"><span>28.11</span><span class="route-name">Shanghai Hongqiao → Pudong</span><span>Отель у аэропорта</span><span class="mode">Авто</span><span class="duration">1–1 ч 30 мин</span><span>Зависит от трафика</span></div>
+        <div class="route-row" role="row"><span>29.11</span><span class="route-name">Shanghai PVG → Moscow SVO</span><span>Возвращение в Россию</span><span class="mode">Авиа</span><span class="duration">10 ч 15 мин</span><span>MU591 · 11:50–17:05</span></div>
+        <div class="route-row" role="row"><span>29.11</span><span class="route-name">Moscow SVO → Kazan KZN</span><span>Завершение поездки</span><span class="mode">Авиа</span><span class="duration">1 ч 45 мин</span><span>SU1278 · 21:55–23:40</span></div>
       </div>
     </section>
 
@@ -556,15 +633,15 @@
   <script>
     const plan = {
       days: [
-        { date: "21", month: "сб · ноя", title: "Казань → Москва → Shenzhen", meta: "10:50 KZN → 12:35 SVO · 21:00 SVO → SZX", note: "Прямой CZ8372 из Sheremetyevo в Shenzhen. Прибытие 22 ноября около 12:10.", focus: "shenzhen", legs: ["kazan-moscow", "moscow-shenzhen"] },
-        { date: "22", month: "вс · ноя", title: "Прилёт в Shenzhen", meta: "12:10 · SZX → Nanshan", note: "Подтверждённая точка прилёта. Прохождение границы, заселение в Nanshan и отдых перед деловой программой.", focus: "shenzhen", legs: [] },
-        { date: "23", month: "пн · ноя", title: "KSTAR · Shenzhen → Huizhou", meta: "09:00–16:00 · затем автомобиль", note: "Подтверждение встречи в процессе. После KSTAR — переезд и ночёвка в Huizhou рядом с BSLBATT.", focus: "huizhou", legs: ["shenzhen-huizhou"] },
-        { date: "24", month: "вт · ноя", title: "BSLBATT · Huizhou → Dongguan", meta: "09:00–16:00 · затем автомобиль", note: "Подтверждение встречи в процессе. После BSLBATT — переезд и ночёвка в Dongguan перед встречей EAST PES.", focus: "dongguan", legs: ["huizhou-dongguan"] },
-        { date: "25", month: "ср · ноя", title: "EAST PES · Dongguan → Zhengzhou", meta: "09:00–14:30 · ZH9305 SZX 18:40 → CGO 21:00", note: "Подтверждение встречи и точного адреса в процессе. После офиса EAST — автомобиль до SZX и прямой перелёт в Zhengzhou.", focus: "zhengzhou", legs: ["dongguan-shenzhen", "shenzhen-zhengzhou"] },
-        { date: "26", month: "чт · ноя", title: "Zhengzhou → EAST PES · Sanmenxia", meta: "Утренний скоростной поезд · площадка BESS с позднего утра", note: "Подтверждение встречи в процессе. Точный адрес площадки EAST PES необходимо получить у контакта.", focus: "sanmenxia", legs: ["zhengzhou-sanmenxia"] },
-        { date: "27", month: "пт · ноя", title: "EAST PES · Sanmenxia → Zhengzhou", meta: "09:00–15:00 · затем скоростной поезд", note: "Подтверждение встречи в процессе. После технической сессии — возвращение в Zhengzhou и ночёвка.", focus: "zhengzhou", legs: ["sanmenxia-zhengzhou"] },
-        { date: "28", month: "сб · ноя", title: "Zhengzhou → Shanghai", meta: "Скоростной поезд · около 5 часов", note: "Переезд в Shanghai Hongqiao и ночёвка рядом с Pudong перед международным вылетом.", focus: "shanghai", legs: ["zhengzhou-shanghai"] },
-        { date: "29", month: "вс · ноя", title: "Shanghai → Moscow → Kazan", meta: "MU591 11:50–17:05 · SU1278 21:55–23:40", note: "Перелёт через Sheremetyevo. Между рейсами около 4 ч 50 мин; при отдельных билетах потребуется повторная регистрация багажа.", focus: "kazan", legs: ["shanghai-moscow", "moscow-kazan"] }
+        { date: "21", month: "сб · ноя", title: "Казань → Москва → Shenzhen", meta: "Авиа · 1 ч 45 мин + 10 ч 10 мин", note: "SU1277 10:50–12:35; CZ8372 21:00–12:10 следующего дня.", focus: "shenzhen", legs: ["kazan-moscow", "moscow-shenzhen"] },
+        { date: "22", month: "вс · ноя", title: "Прилёт в Shenzhen", meta: "Авто · 30–60 мин до Nanshan", note: "Подтверждённая точка прилёта. Прохождение границы, заселение и отдых.", focus: "shenzhen", legs: [] },
+        { date: "23", month: "пн · ноя", title: "KSTAR · Shenzhen → Huizhou", meta: "Авто · 1 ч 30 мин – 2 ч", note: "Подтверждение встречи в процессе. После KSTAR — переезд и ночёвка в Huizhou.", focus: "huizhou", legs: ["shenzhen-huizhou"] },
+        { date: "24", month: "вт · ноя", title: "BSLBATT · Huizhou → Dongguan", meta: "Авто · 1–1 ч 30 мин", note: "Подтверждение встречи в процессе. После BSLBATT — переезд и ночёвка в Dongguan.", focus: "dongguan", legs: ["huizhou-dongguan"] },
+        { date: "25", month: "ср · ноя", title: "EAST PES · Dongguan → Zhengzhou", meta: "Авто · 1 ч 30 мин – 2 ч; Авиа · 2 ч 20 мин", note: "Подтверждение встречи и адреса в процессе. ZH9305 SZX 18:40 → CGO 21:00.", focus: "zhengzhou", legs: ["dongguan-shenzhen", "shenzhen-zhengzhou"] },
+        { date: "26", month: "чт · ноя", title: "Zhengzhou → EAST PES · Sanmenxia", meta: "Ж/Д · 1–1 ч 30 мин", note: "Подтверждение встречи в процессе. Утренний скоростной поезд; площадка BESS с позднего утра.", focus: "sanmenxia", legs: ["zhengzhou-sanmenxia"] },
+        { date: "27", month: "пт · ноя", title: "EAST PES · Sanmenxia → Zhengzhou", meta: "Ж/Д · 1–1 ч 30 мин", note: "Подтверждение встречи в процессе. После технической сессии — возвращение в Zhengzhou.", focus: "zhengzhou", legs: ["sanmenxia-zhengzhou"] },
+        { date: "28", month: "сб · ноя", title: "Zhengzhou → Shanghai", meta: "Ж/Д · около 5 ч; Авто · 1–1 ч 30 мин", note: "Прямой скоростной поезд до Hongqiao, затем переезд и ночёвка рядом с Pudong.", focus: "shanghai", legs: ["zhengzhou-shanghai"] },
+        { date: "29", month: "вс · ноя", title: "Shanghai → Moscow → Kazan", meta: "Авиа · 10 ч 15 мин + 1 ч 45 мин", note: "MU591 11:50–17:05; SU1278 21:55–23:40. Пересадка в Sheremetyevo.", focus: "kazan", legs: ["shanghai-moscow", "moscow-kazan"] }
       ]
     };
 
