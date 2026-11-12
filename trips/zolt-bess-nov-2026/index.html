@@ -163,7 +163,7 @@
     .route-table { border-top: 1px solid var(--ink); }
     .route-row {
       display: grid;
-      grid-template-columns: 90px minmax(260px, 1.5fr) minmax(190px, 1fr) 100px 160px minmax(220px, 1.15fr);
+      grid-template-columns: 88px minmax(300px, 1.45fr) 105px 150px minmax(210px, 1fr) minmax(310px, 1.45fr);
       min-width: 0;
       border-bottom: 1px solid var(--line);
     }
@@ -176,6 +176,7 @@
     .route-row .route-name { font-weight: 700; }
     .route-row .mode { color: var(--accent); font-weight: 800; text-transform: uppercase; }
     .route-row .duration { font-weight: 700; }
+    .route-row .hotel-landmark { background: #fff8e6; font-weight: 700; }
     .route-row:nth-child(odd):not(.header) { background: var(--field); }
 
     .controls {
@@ -465,9 +466,10 @@
       }
       .route-row > span { grid-column: 2; padding: 2px 8px; border-right: 0; font-size: 13px; overflow-wrap: anywhere; }
       .route-row > span:first-child { grid-column: 1; grid-row: 1 / span 5; padding: 2px 8px 2px 0; font-size: 14px; }
-      .route-row > span:nth-child(3)::before { content: "Цель · "; color: var(--muted); font-weight: 400; }
-      .route-row > span:nth-child(5)::before { content: "В пути · "; color: var(--muted); font-weight: 400; }
-      .route-row > span:nth-child(6)::before { content: "Детали · "; color: var(--muted); font-weight: 400; }
+      .route-row > span:nth-child(4)::before { content: "В пути · "; color: var(--muted); font-weight: 400; }
+      .route-row > span:nth-child(5)::before { content: "Прибытие · "; color: var(--muted); font-weight: 400; }
+      .route-row > span:nth-child(6)::before { content: "Ночёвка · "; color: var(--muted); font-weight: 400; }
+      .route-row .hotel-landmark { margin-top: 4px; padding: 6px 8px; }
       footer { flex-direction: column; }
     }
 
@@ -514,7 +516,7 @@
     </section>
 
     <section class="notice" aria-label="Актуальные изменения">
-      <div id="route-notice"><strong>Изменение маршрута:</strong> добавлены офис EAST PES в Dongguan и площадка BESS EAST PES в Sanmenxia. После программы EAST группа едет напрямую в Shanghai.</div>
+      <div id="route-notice"><strong>Финальная логика:</strong> Sanmenxia посещаем одним днём 26 ноября, вечером возвращаемся и ночуем у Zhengzhou East. Утром 27 ноября едем в Shanghai.</div>
       <div class="controls">
         <button class="button primary" id="play-route" type="button">Показать маршрут</button>
         <button class="button" id="show-all" type="button">Весь маршрут</button>
@@ -525,24 +527,25 @@
     <section class="route-table-wrap" aria-labelledby="route-table-title">
       <div class="route-table-heading">
         <h2 id="route-table-title">Финальный укрупнённый маршрут</h2>
-        <p>Каждый транспортный участок — отдельной строкой.<br>Автомобильное время зависит от трафика.</p>
+        <p>Landmark — готовый ориентир для поиска отеля в Trip.com.<br>Автомобильное время зависит от трафика.</p>
       </div>
       <div class="route-table" role="table" aria-label="Транспортные участки маршрута">
-        <div class="route-row header" role="row"><span>Дата</span><span>Маршрут</span><span>Цель</span><span>Транспорт</span><span>В пути</span><span>Рейс / примечание</span></div>
-        <div class="route-row" role="row"><span>21.11</span><span class="route-name">Kazan KZN → Moscow SVO</span><span>Пересадка</span><span class="mode">Авиа</span><span class="duration">1 ч 45 мин</span><span>SU1277 · 10:50–12:35</span></div>
-        <div class="route-row" role="row"><span>21–22.11</span><span class="route-name">Moscow SVO → Shenzhen SZX</span><span>Перелёт в Китай</span><span class="mode">Авиа</span><span class="duration">10 ч 10 мин</span><span>CZ8372 · 21:00–12:10 +1</span></div>
-        <div class="route-row" role="row"><span>22.11</span><span class="route-name">Shenzhen SZX → Nanshan</span><span>Отель и отдых</span><span class="mode">Авто</span><span class="duration">30–60 мин</span><span>Граница и дорожный трафик</span></div>
-        <div class="route-row" role="row"><span>23.11</span><span class="route-name">Shenzhen / KSTAR → Huizhou</span><span>После встречи KSTAR</span><span class="mode">Авто</span><span class="duration">1 ч 30 мин – 2 ч</span><span>Прямой трансфер; ночёвка в Huizhou</span></div>
-        <div class="route-row" role="row"><span>24.11</span><span class="route-name">Huizhou / BSLBATT → Dongguan</span><span>После BSLBATT</span><span class="mode">Авто</span><span class="duration">1–1 ч 30 мин</span><span>Ночёвка в Dongguan</span></div>
-        <div class="route-row" role="row"><span>25.11</span><span class="route-name">Dongguan / EAST PES → Shenzhen SZX</span><span>После встречи EAST PES</span><span class="mode">Авто</span><span class="duration">1 ч 30 мин – 2 ч</span><span>Прямой трансфер; запас на трафик и регистрацию</span></div>
-        <div class="route-row" role="row"><span>25.11</span><span class="route-name">Shenzhen SZX → Zhengzhou CGO</span><span>К программе EAST PES</span><span class="mode">Авиа</span><span class="duration">2 ч 20 мин</span><span>ZH9305 · 18:40–21:00</span></div>
-        <div class="route-row" role="row"><span>25.11</span><span class="route-name">Zhengzhou CGO → отель</span><span>Заселение</span><span class="mode">Авто</span><span class="duration">45–60 мин</span><span>Зависит от трафика</span></div>
-        <div class="route-row" role="row"><span>26.11</span><span class="route-name">Zhengzhou East → Sanmenxia South</span><span>EAST PES · день 1</span><span class="mode">Ж/Д</span><span class="duration">1–1 ч 30 мин</span><span>Скоростной поезд</span></div>
-        <div class="route-row" role="row"><span>27.11</span><span class="route-name">Sanmenxia South → Zhengzhou East</span><span>После EAST PES</span><span class="mode">Ж/Д</span><span class="duration">1–1 ч 30 мин</span><span>Ночёвка в Zhengzhou</span></div>
-        <div class="route-row" role="row"><span>28.11</span><span class="route-name">Zhengzhou East → Shanghai Hongqiao</span><span>Переезд перед вылетом</span><span class="mode">Ж/Д</span><span class="duration">около 5 ч</span><span>Прямой скоростной поезд</span></div>
-        <div class="route-row" role="row"><span>28.11</span><span class="route-name">Shanghai Hongqiao → Pudong</span><span>Отель у аэропорта</span><span class="mode">Авто / метро</span><span class="duration">Авто 1–1 ч 30 мин; метро ≈1 ч 30 мин</span><span>Выбор по трафику и объёму багажа</span></div>
-        <div class="route-row" role="row"><span>29.11</span><span class="route-name">Shanghai PVG → Moscow SVO</span><span>Возвращение в Россию</span><span class="mode">Авиа</span><span class="duration">10 ч 15 мин</span><span>MU591 · 11:50–17:05</span></div>
-        <div class="route-row" role="row"><span>29.11</span><span class="route-name">Moscow SVO → Kazan KZN</span><span>Завершение поездки</span><span class="mode">Авиа</span><span class="duration">1 ч 45 мин</span><span>SU1278 · 21:55–23:40</span></div>
+        <div class="route-row header" role="row"><span>Дата</span><span>Маршрут / программа</span><span>Транспорт</span><span>В пути</span><span>Время / план прибытия</span><span>Ночёвка — район / landmark для Trip.com</span></div>
+        <div class="route-row" role="row"><span>21.11</span><span class="route-name">Kazan KZN → Moscow SVO · SU1277</span><span class="mode">Авиа</span><span class="duration">1 ч 45 мин</span><span>12:35 · пересадка в SVO</span><span>В пути / аэропорт SVO</span></div>
+        <div class="route-row" role="row"><span>21–22.11</span><span class="route-name">Moscow SVO → Shenzhen SZX · CZ8372</span><span class="mode">Авиа</span><span class="duration">10 ч 10 мин</span><span>12:10 +1 · прилёт в Shenzhen</span><span>—</span></div>
+        <div class="route-row" role="row"><span>22.11</span><span class="route-name">Shenzhen SZX → Nanshan · заселение и отдых</span><span class="mode">Авто</span><span class="duration">30–60 мин</span><span>Отель около 14:30–15:00</span><span class="hotel-landmark">Nanshan Science & Technology Park / Shenzhen University Metro Station (深大站)</span></div>
+        <div class="route-row" role="row"><span>23.11</span><span class="route-name">KSTAR · Shenzhen → Huizhou</span><span class="mode">Авто</span><span class="duration">1 ч 30 мин – 2 ч</span><span>После встречи; отель около 18:00–19:00</span><span class="hotel-landmark">Zhongkai High-Tech Zone / Chenjiang South Station (陈江南站)</span></div>
+        <div class="route-row" role="row"><span>24.11</span><span class="route-name">BSLBATT · Huizhou → Dongguan</span><span class="mode">Авто</span><span class="duration">1–1 ч 30 мин</span><span>После встречи; отель около 18:00–19:00</span><span class="hotel-landmark">Songshan Lake High-Tech Park / Songshan Lake North Station (松山湖北站)</span></div>
+        <div class="route-row" role="row"><span>25.11</span><span class="route-name">EAST PES · Dongguan → Shenzhen SZX</span><span class="mode">Авто</span><span class="duration">1 ч 30 мин – 2 ч</span><span>Прибыть в SZX ориентировочно к 16:30</span><span>—</span></div>
+        <div class="route-row" role="row"><span>25.11</span><span class="route-name">Shenzhen SZX → Zhengzhou CGO · ZH9305</span><span class="mode">Авиа</span><span class="duration">2 ч 20 мин</span><span>18:40–21:00</span><span>—</span></div>
+        <div class="route-row" role="row"><span>25.11</span><span class="route-name">Zhengzhou CGO → Zhengzhou East</span><span class="mode">Авто</span><span class="duration">45–60 мин</span><span>Отель около 22:15–22:45</span><span class="hotel-landmark">Zhengzhou East Railway Station (郑州东站) / Zhengdong New District</span></div>
+        <div class="route-row" role="row"><span>26.11</span><span class="route-name">Zhengzhou East → Sanmenxia South · EAST PES</span><span class="mode">Ж/Д</span><span class="duration">1 ч 18 мин</span><span>Рабочий вариант G7943 · 06:43–08:01</span><span>—</span></div>
+        <div class="route-row" role="row"><span>26.11</span><span class="route-name">Sanmenxia South → Zhengzhou East</span><span class="mode">Ж/Д</span><span class="duration">1 ч 04–16 мин</span><span>Основной 19:52–20:56; резерв 20:34–21:50</span><span class="hotel-landmark">Zhengzhou East Railway Station (郑州东站) / Zhengdong New District</span></div>
+        <div class="route-row" role="row"><span>27.11</span><span class="route-name">Zhengzhou East → Shanghai Hongqiao</span><span class="mode">Ж/Д</span><span class="duration">около 5 ч</span><span>Утренний поезд; Shanghai около 15:00–16:00</span><span>—</span></div>
+        <div class="route-row" role="row"><span>27.11</span><span class="route-name">Shanghai Hongqiao → Longyang Road</span><span class="mode">Авто / метро</span><span class="duration">1–1 ч 30 мин</span><span>Отель около 16:30–17:00</span><span class="hotel-landmark">Longyang Road Metro & Maglev Station (龙阳路站) / Century Park, Pudong</span></div>
+        <div class="route-row" role="row"><span>28.11</span><span class="route-name">Shanghai · резервный / свободный день</span><span class="mode">—</span><span class="duration">—</span><span>Без междугороднего переезда</span><span class="hotel-landmark">Longyang Road Metro & Maglev Station (龙阳路站) / Century Park, Pudong</span></div>
+        <div class="route-row" role="row"><span>29.11</span><span class="route-name">Shanghai PVG → Moscow SVO · MU591</span><span class="mode">Авиа</span><span class="duration">10 ч 15 мин</span><span>11:50–17:05; быть в PVG около 08:50</span><span>—</span></div>
+        <div class="route-row" role="row"><span>29.11</span><span class="route-name">Moscow SVO → Kazan KZN · SU1278</span><span class="mode">Авиа</span><span class="duration">1 ч 45 мин</span><span>21:55–23:40</span><span>—</span></div>
       </div>
     </section>
 
@@ -576,12 +579,12 @@
 
             <g class="station" data-station="kazan" transform="translate(105 115)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">KZN</text><text class="name" x="-34" y="58">КАЗАНЬ</text><text class="date" x="-34" y="73">21 / 29 NOV</text></g>
             <g class="station" data-station="moscow" transform="translate(300 115)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">SVO</text><text class="name" x="-34" y="58">МОСКВА</text><text class="date" x="-34" y="73">21 / 29 NOV</text></g>
-            <g class="station" data-station="shanghai" transform="translate(805 145)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">PVG</text><text class="name" x="-34" y="58">ШАНХАЙ</text><text class="date" x="-34" y="73">28 / 29 NOV</text></g>
+            <g class="station" data-station="shanghai" transform="translate(805 145)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">PVG</text><text class="name" x="-34" y="58">ШАНХАЙ</text><text class="date" x="-34" y="73">27–29 NOV</text></g>
             <g class="station" data-station="huizhou" transform="translate(410 520)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">BSL</text><text class="name" x="-34" y="58">HUIZHOU</text><text class="date" x="-34" y="73">23–24 NOV</text></g>
             <g class="station" data-station="shenzhen" transform="translate(300 620)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">SZX</text><text class="name" x="-34" y="58">SHENZHEN / KSTAR</text><text class="date" x="-34" y="73">22–23 NOV</text></g>
             <g class="station" data-station="dongguan" transform="translate(310 430)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">HQ</text><text class="name" x="-34" y="58">EAST / DONGGUAN</text><text class="date" x="-34" y="73">24–25 NOV</text></g>
-            <g class="station" data-station="zhengzhou" transform="translate(610 430)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">CGO</text><text class="name" x="-34" y="58">ZHENGZHOU</text><text class="date" x="-34" y="73">25–28 NOV</text></g>
-            <g class="station" data-station="sanmenxia" transform="translate(500 320)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">EAST</text><text class="name" x="-34" y="58">SANMENXIA</text><text class="date" x="-34" y="73">26–27 NOV</text></g>
+            <g class="station" data-station="zhengzhou" transform="translate(610 430)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">CGO</text><text class="name" x="-34" y="58">ZHENGZHOU</text><text class="date" x="-34" y="73">25–27 NOV</text></g>
+            <g class="station" data-station="sanmenxia" transform="translate(500 320)"><circle r="34"></circle><text class="code" text-anchor="middle" y="8">EAST</text><text class="name" x="-34" y="58">SANMENXIA</text><text class="date" x="-34" y="73">26 NOV</text></g>
 
             <g class="vehicle" id="vehicle"><rect x="-38" y="-15" width="76" height="30"></rect><text id="vehicle-label" y="4">FLIGHT</text></g>
           </svg>
@@ -617,15 +620,16 @@
           <li><strong>CZ8372:</strong> подтвердить SVO 21:00 → SZX 12:10 следующего дня; при отдельных билетах багаж нужно получить и зарегистрировать заново.</li>
           <li>Подтвердить KSTAR на 23 ноября и BSLBATT на 24 ноября.</li>
           <li><strong>25 ноября:</strong> получить точный адрес EAST PES Dongguan, завершить встречу около 14:30 и закрепить ZH9305 SZX 18:40 → CGO 21:00; более поздний рейс оставить резервом.</li>
-          <li>Получить точный адрес площадки EAST PES в Sanmenxia и подтвердить программу на 26–27 ноября.</li>
-          <li><strong>28 ноября:</strong> выбрать прямой скоростной поезд Zhengzhou East → Shanghai Hongqiao; ориентировочное время в пути около 5 часов.</li>
+          <li><strong>26 ноября:</strong> подтвердить однодневную программу EAST PES, G7943 Zhengzhou East 06:43 → Sanmenxia South 08:01 и вечерний возврат 19:52 → 20:56; поезд 20:34 → 21:50 оставить резервом.</li>
+          <li><strong>27 ноября:</strong> выбрать утренний прямой скоростной поезд Zhengzhou East → Shanghai Hongqiao; ориентировочное время в пути около 5 часов.</li>
+          <li>Для поиска отелей использовать landmarks из таблицы; это ориентиры, а не уже выбранные гостиницы.</li>
           <li><strong>29 ноября:</strong> рабочая связка MU591 PVG 11:50 → SVO 17:05 и SU1278 SVO 21:55 → KZN 23:40. При отдельных билетах багаж нужно получить и зарегистрировать заново.</li>
         </ul>
       </div>
     </section>
 
     <footer>
-      <p>Время с символом ≈ является плановым. Номера внутренних рейсов и поездов фиксируются после подтверждения встреч и покупки билетов. Версия маршрута: 12 ноября 2026 года.</p>
+      <p>Landmarks указаны как поисковые ориентиры для Trip.com, а не как выбранные отели. Номера поездов и актуальность рейсов перепроверяются перед покупкой. Версия маршрута: 12 ноября 2026 года.</p>
       <p>Схема маршрута не является географической картой.</p>
     </footer>
   </main>
@@ -634,13 +638,13 @@
     const plan = {
       days: [
         { date: "21", month: "сб · ноя", title: "Казань → Москва → Shenzhen", meta: "Авиа · 1 ч 45 мин + 10 ч 10 мин", note: "SU1277 10:50–12:35; CZ8372 21:00–12:10 следующего дня.", focus: "shenzhen", legs: ["kazan-moscow", "moscow-shenzhen"] },
-        { date: "22", month: "вс · ноя", title: "Прилёт в Shenzhen", meta: "Авто · 30–60 мин до Nanshan", note: "Подтверждённая точка прилёта. Прохождение границы, заселение и отдых.", focus: "shenzhen", legs: [] },
-        { date: "23", month: "пн · ноя", title: "KSTAR · Shenzhen → Huizhou", meta: "Авто · 1 ч 30 мин – 2 ч", note: "Подтверждение встречи в процессе. После KSTAR — переезд и ночёвка в Huizhou.", focus: "huizhou", legs: ["shenzhen-huizhou"] },
-        { date: "24", month: "вт · ноя", title: "BSLBATT · Huizhou → Dongguan", meta: "Авто · 1–1 ч 30 мин", note: "Подтверждение встречи в процессе. После BSLBATT — переезд и ночёвка в Dongguan.", focus: "dongguan", legs: ["huizhou-dongguan"] },
-        { date: "25", month: "ср · ноя", title: "EAST PES · Dongguan → Zhengzhou", meta: "Авто · 1 ч 30 мин – 2 ч; Авиа · 2 ч 20 мин", note: "Подтверждение встречи и адреса в процессе. ZH9305 SZX 18:40 → CGO 21:00.", focus: "zhengzhou", legs: ["dongguan-shenzhen", "shenzhen-zhengzhou"] },
-        { date: "26", month: "чт · ноя", title: "Zhengzhou → EAST PES · Sanmenxia", meta: "Ж/Д · 1–1 ч 30 мин", note: "Подтверждение встречи в процессе. Утренний скоростной поезд; площадка BESS с позднего утра.", focus: "sanmenxia", legs: ["zhengzhou-sanmenxia"] },
-        { date: "27", month: "пт · ноя", title: "EAST PES · Sanmenxia → Zhengzhou", meta: "Ж/Д · 1–1 ч 30 мин", note: "Подтверждение встречи в процессе. После технической сессии — возвращение в Zhengzhou.", focus: "zhengzhou", legs: ["sanmenxia-zhengzhou"] },
-        { date: "28", month: "сб · ноя", title: "Zhengzhou → Shanghai", meta: "Ж/Д · около 5 ч; Авто / метро до Pudong", note: "Прямой скоростной поезд до Hongqiao; далее авто 1–1 ч 30 мин или метро около 1 ч 30 мин.", focus: "shanghai", legs: ["zhengzhou-shanghai"] },
+        { date: "22", month: "вс · ноя", title: "Прилёт в Shenzhen", meta: "Авто · 30–60 мин до Nanshan", note: "Ночёвка: Nanshan Science & Technology Park / Shenzhen University Metro Station (深大站).", focus: "shenzhen", legs: [] },
+        { date: "23", month: "пн · ноя", title: "KSTAR · Shenzhen → Huizhou", meta: "Авто · 1 ч 30 мин – 2 ч", note: "Ночёвка: Zhongkai High-Tech Zone / Chenjiang South Station (陈江南站).", focus: "huizhou", legs: ["shenzhen-huizhou"] },
+        { date: "24", month: "вт · ноя", title: "BSLBATT · Huizhou → Dongguan", meta: "Авто · 1–1 ч 30 мин", note: "Ночёвка: Songshan Lake High-Tech Park / Songshan Lake North Station (松山湖北站).", focus: "dongguan", legs: ["huizhou-dongguan"] },
+        { date: "25", month: "ср · ноя", title: "EAST PES · Dongguan → Zhengzhou", meta: "Авто · 1 ч 30 мин – 2 ч; Авиа · 2 ч 20 мин", note: "Ночёвка: Zhengzhou East Railway Station (郑州东站) / Zhengdong New District.", focus: "zhengzhou", legs: ["dongguan-shenzhen", "shenzhen-zhengzhou"] },
+        { date: "26", month: "чт · ноя", title: "Zhengzhou ↔ EAST PES · Sanmenxia", meta: "G7943 06:43–08:01; обратно 19:52–20:56", note: "Один рабочий день в Sanmenxia. Резервный поезд 20:34–21:50; ночёвка снова у Zhengzhou East.", focus: "zhengzhou", legs: ["zhengzhou-sanmenxia", "sanmenxia-zhengzhou"] },
+        { date: "27", month: "пт · ноя", title: "Zhengzhou → Shanghai", meta: "Ж/Д · около 5 ч; затем авто / метро", note: "Ночёвка: Longyang Road Metro & Maglev Station (龙阳路站) / Century Park, Pudong.", focus: "shanghai", legs: ["zhengzhou-shanghai"] },
+        { date: "28", month: "сб · ноя", title: "Shanghai · резервный день", meta: "Без междугороднего переезда", note: "Вторая ночёвка в том же районе Longyang Road / Century Park перед вылетом из PVG.", focus: "shanghai", legs: [] },
         { date: "29", month: "вс · ноя", title: "Shanghai → Moscow → Kazan", meta: "Авиа · 10 ч 15 мин + 1 ч 45 мин", note: "MU591 11:50–17:05; SU1278 21:55–23:40. Пересадка в Sheremetyevo.", focus: "kazan", legs: ["shanghai-moscow", "moscow-kazan"] }
       ]
     };
